@@ -32,12 +32,12 @@ describe("fetch", () => {
     });
 
     it("fetches the opcode at the current PC", () => {
-        expect(fetch()).toBe("00e0");
+        expect(fetch()).toBe(0x00e0);
     });
 
     it("moves the PC forward by 2", () => {
-        expect(fetch()).toBe("00e0");
-        expect(fetch()).toBe("a22a");
-        expect(fetch()).toBe("600c");
+        expect(fetch()).toBe(0x00e0);
+        expect(fetch()).toBe(0xa22a);
+        expect(fetch()).toBe(0x600c);
     });
 });

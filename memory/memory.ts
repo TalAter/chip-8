@@ -19,13 +19,8 @@ const read = (address: number): number => {
   return memory[address];
 };
 
-const parseOpcodes = (data: Uint8Array): string => {
-  const opcode = (data[0] << 8) | data[1];
-  return opcode.toString(16).padStart(4, "0");
-};
-
-const fetch = () => {
-  const opcodes = parseOpcodes(memory.slice(PC, PC + 2));
+const fetch = (): number => {
+  const opcodes = (memory[PC] << 8) | memory[PC + 1];
   PC += 2;
   return opcodes;
 };
