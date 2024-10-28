@@ -21,7 +21,6 @@ const read = (address: number): number => {
 
 const parseOpcodes = (data: Uint8Array): string => {
   const opcode = (data[0] << 8) | data[1];
-  console.log(opcode.toString(16).padStart(4, "0"));
   return opcode.toString(16).padStart(4, "0");
 };
 
