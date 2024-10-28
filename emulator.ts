@@ -10,6 +10,18 @@ const MICROSECONDS_PER_RENDER = 1_000_000 / FRAME_RATE;
 
 const getCurrentTime = (): number => performance.now() * 1000;
 
+const nibbleOpcode = (opcode: number): number[] => [
+    (opcode & 0xF000) >> 12,
+    (opcode & 0x0F00) >> 8,
+    (opcode & 0x00F0) >> 4,
+    opcode & 0x000F,
+];
+
+const decodeAndExecute = (opcode: number): void => {
+    const nibbles = nibbleOpcode(opcode);
+    console.log(nibbles);
+};
+
 const init = (filename: string): void => {
     memory.storeFont(font);
 
@@ -29,6 +41,8 @@ const mainLoop = async (): Promise<void> => {
         // Fetch-Decode-Execute
         while (accummulatedTime >= MICROSECONDS_PER_CYCLE) {
             accummulatedTime -= MICROSECONDS_PER_CYCLE;
+            const opcode = memory.fetch();
+            decodeAndExecute(opcode);
         }
 
         // Render
