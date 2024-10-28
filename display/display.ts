@@ -19,13 +19,6 @@ const setPixel = (x: number, y: number, state: boolean): boolean => {
 };
 
 const render = (): boolean => {
-    setPixel(1, 0, true);
-    setPixel(2, 0, true);
-    setPixel(3, 0, true);
-    setPixel(3, 1, true);
-    setPixel(3, 2, true);
-    setPixel(3, 3, true);
-
     let output = "";
     for (let y = 0; y < HEIGHT; y++) {
         for (let x = 0; x < WIDTH; x++) {
