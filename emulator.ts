@@ -3,15 +3,44 @@ import * as memory from "./memory/memory.ts";
 import * as display from "./display/display.ts";
 import { font } from "./fonts/font.ts";
 
-const init = (filename: string): boolean => {
+const CYCLES_PER_SECOND = 700; // 700 Hz
+const FRAME_RATE = 60;
+const MICROSECONDS_PER_CYCLE = 1_000_000 / CYCLES_PER_SECOND;
+const MICROSECONDS_PER_RENDER = 1_000_000 / FRAME_RATE;
+
+const getCurrentTime = (): number => performance.now() * 1000;
+
+const init = (filename: string): void => {
     memory.storeFont(font);
 
     const cartridgeData = cartridge.readChip8File(filename);
     memory.storeROM(cartridgeData);
+};
 
-    display.render();
+const mainLoop = async (): Promise<void> => {
+    let accummulatedTime = 0;
+    let lastRender = 0;
+    let lastCycleTime = getCurrentTime();
+    while (true) {
+        const currentTime = getCurrentTime();
+        accummulatedTime += currentTime - lastCycleTime;
+        lastCycleTime = currentTime;
 
-    return true;
+        // Fetch-Decode-Execute
+        while (accummulatedTime >= MICROSECONDS_PER_CYCLE) {
+            accummulatedTime -= MICROSECONDS_PER_CYCLE;
+        }
+
+        // Render
+        if (currentTime - lastRender >= MICROSECONDS_PER_RENDER) {
+            lastRender = getCurrentTime();
+            display.render();
+        }
+
+        await new Promise((resolve) => setTimeout(resolve, 1));
+    }
 };
 
 init("./roms/IBMLogo.ch8");
+
+mainLoop();
