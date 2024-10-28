@@ -41,6 +41,4 @@ const mainLoop = async (): Promise<void> => {
     }
 };
 
-init("./roms/IBMLogo.ch8");
-
-mainLoop();
+export { init, mainLoop };
