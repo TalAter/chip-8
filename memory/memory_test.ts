@@ -3,7 +3,7 @@ import { expect } from "jsr:@std/expect";
 import { fetch, read, setPC, storeFont, storeROM } from "./memory.ts";
 import { FONT_START, ROM_START } from "./memory.ts";
 import { font } from "../fonts/font.ts";
-import { init } from "../emulator.ts";
+import { init } from "../emulator/emulator.ts";
 
 describe("storeFont", () => {
     it("stores the font in memory", () => {

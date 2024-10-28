@@ -1,4 +1,4 @@
-import { init, mainLoop } from "./emulator.ts";
+import { init, mainLoop } from "./emulator/emulator.ts";
 
 init("./roms/IBMLogo.ch8");
 

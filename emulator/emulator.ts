@@ -1,7 +1,7 @@
-import * as cartridge from "./cartridge/cartridge.ts";
-import * as memory from "./memory/memory.ts";
-import * as display from "./display/display.ts";
-import { font } from "./fonts/font.ts";
+import * as cartridge from "../cartridge/cartridge.ts";
+import * as memory from "../memory/memory.ts";
+import * as display from "../display/display.ts";
+import { font } from "../fonts/font.ts";
 
 const CYCLES_PER_SECOND = 700; // 700 Hz
 const FRAME_RATE = 60;
