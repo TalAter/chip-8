@@ -1,6 +1,6 @@
-import { beforeEach, describe, it } from "jsr:@std/testing/bdd";
+import { afterEach, beforeEach, describe, it } from "jsr:@std/testing/bdd";
 import { expect } from "jsr:@std/expect";
-import { fetch, read, setPC, storeFont, storeROM } from "./memory.ts";
+import { fetch, getPC, read, setPC, storeFont, storeROM } from "./memory.ts";
 import { FONT_START, ROM_START } from "./memory.ts";
 import { font } from "../fonts/font.ts";
 import { init } from "../emulator/emulator.ts";
@@ -31,6 +31,10 @@ describe("fetch", () => {
         setPC(ROM_START);
     });
 
+    afterEach(() => {
+        setPC(ROM_START);
+    });
+
     it("fetches the opcode at the current PC", () => {
         expect(fetch()).toBe(0x00e0);
     });
@@ -39,5 +43,13 @@ describe("fetch", () => {
         expect(fetch()).toBe(0x00e0);
         expect(fetch()).toBe(0xa22a);
         expect(fetch()).toBe(0x600c);
+    });
+});
+
+describe("setPC", () => {
+    it("changes the Program Counter", () => {
+        expect(getPC()).toBe(ROM_START);
+        setPC(ROM_START + 3);
+        expect(getPC()).toBe(ROM_START + 3);
     });
 });
