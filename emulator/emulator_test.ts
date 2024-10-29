@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, it } from "jsr:@std/testing/bdd";
 import { expect } from "jsr:@std/expect";
 import { assertSpyCalls, Spy, spy } from "jsr:@std/testing/mock";
-import { fetch, setPC, storeROM } from "../memory/memory.ts";
+import { fetch, getPC, setPC, storeROM } from "../memory/memory.ts";
 import { ROM_START } from "../memory/memory.ts";
 import * as emulator from "../emulator/emulator.ts";
 import { createTerminalDisplay, Display } from "../display/display.ts";
@@ -42,6 +42,16 @@ describe("decodeAndExecute", () => {
             assertSpyCalls(clearSpy, 0);
             emulator.decodeAndExecute(opcode);
             assertSpyCalls(clearSpy, 1);
+        });
+    });
+
+    describe("1NNN", () => {
+        it("sets the Program Counter", () => {
+            expect(getPC()).toBe(ROM_START);
+            emulator.decodeAndExecute(0x1345);
+            expect(getPC()).toBe(0x345);
+            emulator.decodeAndExecute(0x1ada);
+            expect(getPC()).toBe(0xada);
         });
     });
 });

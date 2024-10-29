@@ -27,6 +27,9 @@ const decodeAndExecute = (opcode: number): void => {
                 display.clear();
             }
             break;
+        case 1:
+            memory.setPC(opcode & 0x0FFF);
+            break;
     }
 };
 
