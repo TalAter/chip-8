@@ -19,7 +19,11 @@ const setPixel = (x: number, y: number, state: boolean): boolean => {
     return true;
 };
 
-const render = (): boolean => {
+const clear = (): void => {
+    console.log(CLEAR_SCREEN);
+};
+
+const render = (): void => {
     let output = "";
     for (let y = 0; y < HEIGHT; y++) {
         for (let x = 0; x < WIDTH; x++) {
@@ -31,9 +35,8 @@ const render = (): boolean => {
         }
         output += "\r\n";
     }
-    console.log(CLEAR_SCREEN);
+    clear();
     console.log(output);
-    return true;
 };
 
-export { render };
+export { clear, render };
