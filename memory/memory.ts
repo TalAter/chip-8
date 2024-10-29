@@ -29,5 +29,7 @@ const setPC = (addr: number): void => {
   PC = addr;
 };
 
+const getPC = (): number => PC;
+
 export { FONT_START, ROM_START };
-export { fetch, read, setPC, storeFont, storeROM };
+export { fetch, getPC, read, setPC, storeFont, storeROM };
