@@ -19,7 +19,6 @@ const nibbleOpcode = (opcode: number): number[] => [
 
 const decodeAndExecute = (opcode: number): void => {
     const nibbles = nibbleOpcode(opcode);
-    console.log(nibbles);
 };
 
 const init = (filename: string): void => {
@@ -55,4 +54,4 @@ const mainLoop = async (): Promise<void> => {
     }
 };
 
-export { init, mainLoop };
+export { init, mainLoop, nibbleOpcode };
