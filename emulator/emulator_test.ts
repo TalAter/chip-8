@@ -41,7 +41,7 @@ describe("decodeAndExecute", () => {
             const opcode = fetch();
             assertSpyCalls(clearSpy, 0);
             emulator.decodeAndExecute(opcode);
-            // assertSpyCalls(clearSpy, 1);
+            assertSpyCalls(clearSpy, 1);
         });
     });
 });

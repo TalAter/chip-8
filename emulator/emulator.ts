@@ -21,6 +21,13 @@ const nibbleOpcode = (opcode: number): number[] => [
 
 const decodeAndExecute = (opcode: number): void => {
     const [nib1, nib2, nib3, nib4] = nibbleOpcode(opcode);
+    switch (nib1) {
+        case 0:
+            if (opcode === 0x00e0) {
+                display.clear();
+            }
+            break;
+    }
 };
 
 const connectDisplay = (displayToConnect: Display): void => {
