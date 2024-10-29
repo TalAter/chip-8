@@ -18,7 +18,7 @@ const nibbleOpcode = (opcode: number): number[] => [
 ];
 
 const decodeAndExecute = (opcode: number): void => {
-    const nibbles = nibbleOpcode(opcode);
+    const [nib1, nib2, nib3, nib4] = nibbleOpcode(opcode);
 };
 
 const init = (filename: string): void => {
