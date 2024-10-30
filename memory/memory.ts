@@ -22,7 +22,7 @@ const read = (address: number): number => {
 
 const fetch = (): number => {
   const opcodes = (memory[PC[0]] << 8) | memory[PC[0] + 1];
-  PC[0] += 2 & 0xFFFF; // Ensure PC stays 16-bit after increment
+  PC[0] += 2 & 0xFFFF; // bitwise & to ensure PC stays 16-bit after increment
   return opcodes;
 };
 
