@@ -23,7 +23,7 @@ const decodeAndExecute = (opcode: number): void => {
     const [nib1, nib2, nib3, nib4] = nibbleOpcode(opcode);
     switch (nib1) {
         case 0:
-            // Opcode: 00e0
+            // Opcode: 00e0 (clear screen)
             if (opcode === 0x00e0) {
                 display.clear();
             } else {
@@ -31,7 +31,7 @@ const decodeAndExecute = (opcode: number): void => {
             }
             break;
         case 1:
-            // Opcode: 1NNN
+            // Opcode: 1NNN (jump)
             memory.setPC(opcode & 0x0FFF);
             break;
         default:

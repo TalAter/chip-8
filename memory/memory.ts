@@ -3,7 +3,8 @@ const memory: Uint8Array = new Uint8Array(memoryBuffer);
 const ROM_START = 0x200;
 const FONT_START = 0x050;
 
-const PC = new Uint16Array(1); // The Program Counter. Points at the current instruction in memory
+// The Program Counter. Points at the current instruction in memory
+const PC = new Uint16Array(1);
 PC[0] = ROM_START;
 
 const storeFont = (data: number[]): boolean => {
