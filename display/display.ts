@@ -25,7 +25,7 @@ const createTerminalDisplay = (): Display => {
     const PX_OFF = "·";
     const CLEAR_SCREEN = "\x1Bc";
     const clear = (): void => {
-        console.log(CLEAR_SCREEN);
+        displayState.fill(0);
     };
 
     const render = (): void => {
@@ -40,7 +40,7 @@ const createTerminalDisplay = (): Display => {
             }
             output += "\r\n";
         }
-        clear();
+        console.log(CLEAR_SCREEN);
         console.log(output);
     };
 
