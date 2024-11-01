@@ -4,6 +4,7 @@ import {
     fetch,
     getPC,
     getRegister,
+    getRegisterI,
     resetRegisters,
     setPC,
     storeROM,
@@ -75,6 +76,16 @@ describe("decodeAndExecute", () => {
             expect(getRegister(0x3)).toBe(0x44);
             emulator.decodeAndExecute(0x7301);
             expect(getRegister(0x3)).toBe(0x45);
+        });
+    });
+
+    describe("ANNN", () => {
+        it("sets register I to NNN", () => {
+            expect(getRegisterI()).toBe(0);
+            emulator.decodeAndExecute(0xA010);
+            expect(getRegisterI()).toBe(0x010);
+            emulator.decodeAndExecute(0xAFFF);
+            expect(getRegisterI()).toBe(0xFFF);
         });
     });
 });
