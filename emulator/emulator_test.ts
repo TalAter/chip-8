@@ -1,6 +1,13 @@
 import { beforeEach, describe, it } from "jsr:@std/testing/bdd";
 import { expect } from "jsr:@std/expect";
-import { fetch, getPC, setPC, storeROM } from "../memory/memory.ts";
+import {
+    fetch,
+    getPC,
+    getRegister,
+    resetRegisters,
+    setPC,
+    storeROM,
+} from "../memory/memory.ts";
 import { ROM_START } from "../memory/memory.ts";
 import * as emulator from "../emulator/emulator.ts";
 import {
@@ -21,6 +28,7 @@ describe("nibbleOpcode", () => {
 
 describe("decodeAndExecute", () => {
     beforeEach(() => {
+        resetRegisters();
         emulator.connectDisplay(createTerminalDisplay());
         const cartridgeData = new Uint8Array([0x00, 0xe0, 0xa2, 0x2a]);
         storeROM(cartridgeData);
@@ -44,6 +52,17 @@ describe("decodeAndExecute", () => {
             expect(getPC()).toBe(0x345);
             emulator.decodeAndExecute(0x1ada);
             expect(getPC()).toBe(0xada);
+        });
+    });
+
+    describe("6XNN", () => {
+        it("sets register X to NN", () => {
+            expect(getRegister(0x3)).toBe(0);
+            expect(getRegister(0xC)).toBe(0);
+            emulator.decodeAndExecute(0x63FA);
+            expect(getRegister(0x3)).toBe(0xFA);
+            emulator.decodeAndExecute(0x6CAA);
+            expect(getRegister(0xC)).toBe(0xAA);
         });
     });
 });
