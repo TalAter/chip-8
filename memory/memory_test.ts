@@ -4,10 +4,12 @@ import {
     fetch,
     getPC,
     getRegister,
+    getRegisterI,
     read,
     resetRegisters,
     setPC,
     setRegister,
+    setRegisterI,
     storeFont,
     storeROM,
 } from "./memory.ts";
@@ -96,6 +98,31 @@ describe("registers", () => {
             setRegister(3, 72);
             expect(getRegister(1)).toBe(36);
             expect(getRegister(3)).toBe(72);
+        });
+    });
+});
+
+describe("I register", () => {
+    beforeEach(() => {
+        setRegisterI(0);
+    });
+
+    describe("setRegisterI", () => {
+        it("sets the value of a single register", () => {
+            setRegisterI(36);
+            expect(getRegisterI()).toBe(36);
+            setRegisterI(72);
+            expect(getRegisterI()).toBe(72);
+        });
+    });
+
+    describe("getRegisterI", () => {
+        it("gets the value of a single register", () => {
+            expect(getRegisterI()).toBe(0);
+            setRegisterI(36);
+            expect(getRegisterI()).toBe(36);
+            setRegisterI(72);
+            expect(getRegisterI()).toBe(72);
         });
     });
 });

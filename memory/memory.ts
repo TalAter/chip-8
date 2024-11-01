@@ -11,6 +11,10 @@ PC[0] = ROM_START;
 // 16 general purpose 8-bit registers
 const registers = new Uint8Array(16);
 
+// The I register
+// A single 16-bit register
+const registerI = new Uint16Array(1);
+
 const storeFont = (data: number[]): boolean => {
   memory.set(data, FONT_START);
   return true;
@@ -49,15 +53,25 @@ const setRegister = (x: number, value: number): void => {
   registers[x] = value;
 };
 
+const getRegisterI = (): number => {
+  return registerI[0];
+};
+
+const setRegisterI = (value: number): void => {
+  registerI[0] = value;
+};
+
 export { FONT_START, ROM_START };
 export {
   fetch,
   getPC,
   getRegister,
+  getRegisterI,
   read,
   resetRegisters,
   setPC,
   setRegister,
+  setRegisterI,
   storeFont,
   storeROM,
 };
