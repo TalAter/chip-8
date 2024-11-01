@@ -47,4 +47,4 @@ const createTerminalDisplay = (): Display => {
     return { clear, render };
 };
 
-export { createTerminalDisplay };
+export { createTerminalDisplay, getPixel, setPixel };
