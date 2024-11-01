@@ -7,6 +7,10 @@ const FONT_START = 0x050;
 const PC = new Uint16Array(1);
 PC[0] = ROM_START;
 
+// The Vx registers
+// 16 general purpose 8-bit registers
+const registers = new Uint8Array(16);
+
 const storeFont = (data: number[]): boolean => {
   memory.set(data, FONT_START);
   return true;
@@ -33,5 +37,27 @@ const setPC = (addr: number): void => {
 
 const getPC = (): number => PC[0];
 
+const getRegister = (x: number): number => {
+  return registers[x];
+};
+
+const resetRegisters = (): void => {
+  registers.fill(0);
+};
+
+const setRegister = (x: number, value: number): void => {
+  registers[x] = value;
+};
+
 export { FONT_START, ROM_START };
-export { fetch, getPC, read, setPC, storeFont, storeROM };
+export {
+  fetch,
+  getPC,
+  getRegister,
+  read,
+  resetRegisters,
+  setPC,
+  setRegister,
+  storeFont,
+  storeROM,
+};

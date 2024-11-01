@@ -1,6 +1,16 @@
 import { afterEach, beforeEach, describe, it } from "jsr:@std/testing/bdd";
 import { expect } from "jsr:@std/expect";
-import { fetch, getPC, read, setPC, storeFont, storeROM } from "./memory.ts";
+import {
+    fetch,
+    getPC,
+    getRegister,
+    read,
+    resetRegisters,
+    setPC,
+    setRegister,
+    storeFont,
+    storeROM,
+} from "./memory.ts";
 import { FONT_START, ROM_START } from "./memory.ts";
 import { font } from "../fonts/font.ts";
 import { init } from "../emulator/emulator.ts";
@@ -51,5 +61,41 @@ describe("setPC", () => {
         expect(getPC()).toBe(ROM_START);
         setPC(ROM_START + 3);
         expect(getPC()).toBe(ROM_START + 3);
+    });
+});
+
+describe("registers", () => {
+    beforeEach(() => {
+        resetRegisters();
+    });
+    describe("resetRegisters", () => {
+        it("resets all registers back to 0", () => {
+            setRegister(1, 36);
+            setRegister(3, 72);
+            resetRegisters();
+            expect(getRegister(1)).toBe(0);
+            expect(getRegister(3)).toBe(0);
+        });
+    });
+
+    describe("setRegister", () => {
+        it("sets the value of a single register", () => {
+            setRegister(1, 36);
+            setRegister(3, 72);
+            expect(getRegister(1)).toBe(36);
+            expect(getRegister(3)).toBe(72);
+            expect(getRegister(0)).toBe(0);
+        });
+    });
+
+    describe("getRegister", () => {
+        it("gets the value of a single register", () => {
+            expect(getRegister(1)).toBe(0);
+            expect(getRegister(3)).toBe(0);
+            setRegister(1, 36);
+            setRegister(3, 72);
+            expect(getRegister(1)).toBe(36);
+            expect(getRegister(3)).toBe(72);
+        });
     });
 });
