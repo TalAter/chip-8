@@ -16,9 +16,8 @@ const getPixel = (x: number, y: number): boolean => {
     return Boolean(displayState[translateCoordinates(x, y)]);
 };
 
-const setPixel = (x: number, y: number, state: boolean): boolean => {
+const setPixel = (x: number, y: number, state: boolean): void => {
     displayState[translateCoordinates(x, y)] = +state;
-    return true;
 };
 
 const createTerminalDisplay = (): Display => {
