@@ -65,4 +65,16 @@ describe("decodeAndExecute", () => {
             expect(getRegister(0xC)).toBe(0xAA);
         });
     });
+
+    describe("7XNN", () => {
+        it("adds NN to register X", () => {
+            expect(getRegister(0x3)).toBe(0);
+            emulator.decodeAndExecute(0x7322);
+            expect(getRegister(0x3)).toBe(0x22);
+            emulator.decodeAndExecute(0x7322);
+            expect(getRegister(0x3)).toBe(0x44);
+            emulator.decodeAndExecute(0x7301);
+            expect(getRegister(0x3)).toBe(0x45);
+        });
+    });
 });

@@ -31,12 +31,19 @@ const decodeAndExecute = (opcode: number): void => {
             }
             break;
         case 1:
-            // Opcode: 1NNN (jump)
+            // Opcode: 1NNN (jump. aka set the Program Counter)
             memory.setPC(opcode & 0x0FFF);
             break;
         case 6:
-            // Opcode: 6XNN (set register VX)
+            // Opcode: 6XNN (sets register X to NN)
             memory.setRegister(nib2, opcode & 0x00FF);
+            break;
+        case 7:
+            // Opcode: 7XNN (adds NN to register X)
+            memory.setRegister(
+                nib2,
+                memory.getRegister(nib2) + opcode & 0x00FF,
+            );
             break;
         default:
             throw (new Error(`Unknown OPCode ${opcode}`));
