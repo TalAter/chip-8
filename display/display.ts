@@ -1,7 +1,7 @@
 const WIDTH = 64;
 const HEIGHT = 32;
 const PX_ON = "█";
-const PX_OFF = "·";
+const PX_OFF = "░";
 const CLEAR_SCREEN = "\x1Bc";
 
 const displayState = new Uint8Array(WIDTH * HEIGHT);
