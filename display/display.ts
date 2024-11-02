@@ -6,6 +6,7 @@ const PX_ON = "█";
 const PX_OFF = "░";
 const CLEAR_SCREEN = "\x1Bc";
 
+// @TODO: Optimize so that each byte stores 8 pixels
 const displayState = new Uint8Array(WIDTH * HEIGHT);
 
 const translateCoordinates = (x: number, y: number): number => {
