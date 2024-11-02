@@ -33,11 +33,11 @@ describe("decodeAndExecute", () => {
 
     describe("00E0", () => {
         it("resets the display state", () => {
-            setPixel(5, 5, true);
+            setPixel(5, 5, 1);
             const opcode = fetch();
-            expect(getPixel(5, 5)).toBe(true);
+            expect(getPixel(5, 5)).toBe(1);
             emulator.decodeAndExecute(opcode);
-            expect(getPixel(5, 5)).toBe(false);
+            expect(getPixel(5, 5)).toBe(0);
         });
     });
 

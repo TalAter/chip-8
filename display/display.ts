@@ -1,3 +1,5 @@
+import { Bit } from "../types.ts";
+
 const WIDTH = 64;
 const HEIGHT = 32;
 const PX_ON = "█";
@@ -10,12 +12,12 @@ const translateCoordinates = (x: number, y: number): number => {
     return x + y * WIDTH;
 };
 
-const getPixel = (x: number, y: number): boolean => {
-    return Boolean(displayState[translateCoordinates(x, y)]);
+const getPixel = (x: number, y: number): Bit => {
+    return displayState[translateCoordinates(x, y)] as Bit;
 };
 
-const setPixel = (x: number, y: number, state: boolean): void => {
-    displayState[translateCoordinates(x, y)] = +state;
+const setPixel = (x: number, y: number, state: Bit): void => {
+    displayState[translateCoordinates(x, y)] = state;
 };
 
 const clear = (): void => {
