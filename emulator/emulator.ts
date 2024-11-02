@@ -1,14 +1,12 @@
 import * as cartridge from "../cartridge/cartridge.ts";
 import * as memory from "../memory/memory.ts";
-import { Display } from "../display/display.ts";
+import * as display from "../display/display.ts";
 import { font } from "../fonts/font.ts";
 
 const CYCLES_PER_SECOND = 700; // 700 Hz
 const FRAME_RATE = 60;
 const MICROSECONDS_PER_CYCLE = 1_000_000 / CYCLES_PER_SECOND;
 const MICROSECONDS_PER_RENDER = 1_000_000 / FRAME_RATE;
-
-let display: Display;
 
 const getCurrentTime = (): number => performance.now() * 1000;
 
@@ -54,10 +52,6 @@ const decodeAndExecute = (opcode: number): void => {
     }
 };
 
-const connectDisplay = (displayToConnect: Display): void => {
-    display = displayToConnect;
-};
-
 const init = (filename: string): void => {
     memory.storeFont(font);
 
@@ -91,4 +85,4 @@ const mainLoop = async (): Promise<void> => {
     }
 };
 
-export { connectDisplay, decodeAndExecute, init, mainLoop, nibbleOpcode };
+export { decodeAndExecute, init, mainLoop, nibbleOpcode };

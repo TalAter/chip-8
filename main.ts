@@ -1,7 +1,5 @@
-import { connectDisplay, init, mainLoop } from "./emulator/emulator.ts";
-import { createTerminalDisplay } from "./display/display.ts";
+import { init, mainLoop } from "./emulator/emulator.ts";
 
-connectDisplay(createTerminalDisplay());
 init("./roms/IBMLogo.ch8");
 
 mainLoop();

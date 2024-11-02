@@ -11,11 +11,7 @@ import {
 } from "../memory/memory.ts";
 import { ROM_START } from "../memory/memory.ts";
 import * as emulator from "../emulator/emulator.ts";
-import {
-    createTerminalDisplay,
-    getPixel,
-    setPixel,
-} from "../display/display.ts";
+import { getPixel, setPixel } from "../display/display.ts";
 
 describe("nibbleOpcode", () => {
     it("nibbles a 16 bit to four 4 bit nibbles", () => {
@@ -30,7 +26,6 @@ describe("nibbleOpcode", () => {
 describe("decodeAndExecute", () => {
     beforeEach(() => {
         resetRegisters();
-        emulator.connectDisplay(createTerminalDisplay());
         const cartridgeData = new Uint8Array([0x00, 0xe0, 0xa2, 0x2a]);
         storeROM(cartridgeData);
         setPC(ROM_START);
