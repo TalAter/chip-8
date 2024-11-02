@@ -15,14 +15,12 @@ const registers = new Uint8Array(16);
 // A single 16-bit register
 const registerI = new Uint16Array(1);
 
-const storeFont = (data: number[]): boolean => {
+const storeFont = (data: number[]): void => {
   memory.set(data, FONT_START);
-  return true;
 };
 
-const storeROM = (data: Uint8Array): boolean => {
+const storeROM = (data: Uint8Array): void => {
   memory.set(data, ROM_START);
-  return true;
 };
 
 const read = (address: number): number => {
