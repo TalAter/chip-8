@@ -27,6 +27,10 @@ const read = (address: number): number => {
   return memory[address];
 };
 
+const reset = (): void => {
+  memory.fill(0);
+};
+
 const fetch = (): number => {
   const opcodes = (memory[PC[0]] << 8) | memory[PC[0] + 1];
   PC[0] += 2 & 0xFFFF; // bitwise & to ensure PC stays 16-bit after increment
@@ -66,6 +70,7 @@ export {
   getRegister,
   getRegisterI,
   read,
+  reset,
   resetRegisters,
   setPC,
   setRegister,
