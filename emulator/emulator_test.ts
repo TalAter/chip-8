@@ -77,6 +77,18 @@ describe("decodeAndExecute", () => {
         });
     });
 
+    describe("00EE", () => {
+        it("sets the Program Counter to address in the top of the stack", () => {
+            expect(getPC()).toBe(ROM_START);
+            emulator.decodeAndExecute(0x22D4);
+            expect(getPC()).toBe(0x2D4);
+            expect(stackLength()).toBe(1);
+            emulator.decodeAndExecute(0x00EE);
+            expect(getPC()).toBe(ROM_START);
+            expect(stackLength()).toBe(0);
+        });
+    });
+
     describe("3XNN", () => {
         it("skips one instruction if the value in VX is equal to NN", () => {
             const PC = getPC();

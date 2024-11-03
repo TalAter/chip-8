@@ -23,9 +23,12 @@ const decodeAndExecute = (opcode: Uint16): void => {
     const [nib1, nib2, nib3, nib4] = nibbleOpcode(opcode);
     switch (nib1) {
         case 0:
-            // Opcode: 00e0 (clear screen)
             if (opcode === 0x00e0) {
+                // Opcode: 00E0 (clear screen)
                 display.clear();
+            } else if (opcode === 0x00EE) {
+                // Opcode: 00EE (return from a subroutine)
+                memory.setPC(memory.stackPop());
             } else {
                 throw new UnknownOpcodeError(opcode);
             }
