@@ -154,7 +154,11 @@ const decodeAndExecute = (opcode: Uint16): void => {
                 }
                 memory.write(addr, values);
             } else if (nib3 === 6 && nib4 === 5) {
-                throw new UnknownOpcodeError(opcode);
+                // Opcode: FX65 (Fill registers V0 through VX with values from memory at address I through I+X)
+                const addr = memory.getRegisterI();
+                for (let counter = 0; counter <= nib2; counter++) {
+                    memory.setRegister(counter, memory.read(addr + counter));
+                }
             } else {
                 throw new UnknownOpcodeError(opcode);
             }

@@ -16,6 +16,7 @@ import {
     stackReset,
     storeFont,
     storeROM,
+    write,
 } from "../memory/memory.ts";
 import { FONT_START, ROM_START } from "../memory/memory.ts";
 import * as emulator from "../emulator/emulator.ts";
@@ -328,11 +329,26 @@ describe("decodeAndExecute", () => {
             setRegister(2, 0xF2);
             setRegister(3, 0xF3);
             setRegisterI(addr);
+
             emulator.decodeAndExecute(0xF255);
             expect(read(addr + 0)).toBe(0xF0);
             expect(read(addr + 1)).toBe(0xF1);
             expect(read(addr + 2)).toBe(0xF2);
             expect(read(addr + 3)).toBe(0); // unchanged
+        });
+    });
+
+    describe("FX65", () => {
+        it("stores the values from memory addresses I through I+X to registers 0 through X", () => {
+            const addr = ROM_START + 100;
+            write(addr, new Uint8Array([0xF0, 0xF1, 0xF2, 0xF3]));
+            setRegisterI(addr);
+
+            emulator.decodeAndExecute(0xF265);
+            expect(getRegister(0)).toBe(0xF0);
+            expect(getRegister(1)).toBe(0xF1);
+            expect(getRegister(2)).toBe(0xF2);
+            expect(getRegister(3)).toBe(0); // unchanged
         });
     });
 });
