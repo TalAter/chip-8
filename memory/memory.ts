@@ -52,7 +52,7 @@ const fetch = (): Uint16 => {
 };
 
 const setPC = (addr: MemoryAddress): void => {
-  PC = addr & 0xFFFF; // bitwise & to ensure PC stays 16-bit after increment
+  PC = addr & 0xFFFF; // Bitwise AND to ensure PC stays 16-bit after increment
 };
 
 const getPC = (): MemoryAddress => PC;
