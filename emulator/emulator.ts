@@ -119,6 +119,23 @@ const decodeAndExecute = (opcode: Uint16): void => {
                 }
             }
             break;
+        case 0xF:
+            if (nib3 === 3 && nib4 === 3) {
+                // Opcode: FX33 (Store the binary-coded decimal representation of VX at addresses I, I+1, and I+2)
+                const number = memory.getRegister(nib2);
+                const i = memory.getRegisterI();
+                memory.write(
+                    i,
+                    new Uint8Array([
+                        Math.floor(number / 100),
+                        Math.floor(number / 10 % 10),
+                        number % 10,
+                    ]),
+                );
+            } else {
+                throw new UnknownOpcodeError(opcode);
+            }
+            break;
         default:
             throw new UnknownOpcodeError(opcode);
     }

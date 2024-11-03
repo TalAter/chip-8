@@ -5,6 +5,7 @@ import {
     getPC,
     getRegister,
     getRegisterI,
+    read,
     reset,
     resetRegisters,
     setPC,
@@ -267,5 +268,29 @@ describe("decodeAndExecute", () => {
         });
 
         it.skip("wraps around the y and x values if they are larger than the screen", () => {});
+    });
+
+    describe("FX33", () => {
+        it("takes the number in VX and stores each of each decimal digits in the address from register I to I+2", () => {
+            const testCases = [
+                { input: 146, expected: [1, 4, 6] },
+                { input: 255, expected: [2, 5, 5] }, // Max value
+                { input: 0, expected: [0, 0, 0] }, // Min value
+                { input: 7, expected: [0, 0, 7] }, // Single digit
+                { input: 99, expected: [0, 9, 9] }, // Two digits
+            ];
+
+            const addressToWriteTo = 0x777;
+
+            testCases.forEach(({ input, expected }) => {
+                setRegister(0x0, input);
+                setRegisterI(addressToWriteTo);
+                emulator.decodeAndExecute(0xF033);
+
+                expect(read(addressToWriteTo)).toBe(expected[0]);
+                expect(read(addressToWriteTo + 1)).toBe(expected[1]);
+                expect(read(addressToWriteTo + 2)).toBe(expected[2]);
+            });
+        });
     });
 });
