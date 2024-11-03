@@ -145,6 +145,16 @@ const decodeAndExecute = (opcode: Uint16): void => {
                         number % 10,
                     ]),
                 );
+            } else if (nib3 === 5 && nib4 === 5) {
+                // Opcode: FX55 (Store registers V0 through VX in memory starting at location I)
+                const addr = memory.getRegisterI();
+                const values = new Uint8Array(nib2 + 1);
+                for (let counter = 0; counter <= nib2; counter++) {
+                    values[counter] = memory.getRegister(counter);
+                }
+                memory.write(addr, values);
+            } else if (nib3 === 6 && nib4 === 5) {
+                throw new UnknownOpcodeError(opcode);
             } else {
                 throw new UnknownOpcodeError(opcode);
             }

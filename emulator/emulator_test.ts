@@ -319,4 +319,20 @@ describe("decodeAndExecute", () => {
             });
         });
     });
+
+    describe("FX55", () => {
+        it("stores the values from registers 0 to X in memory addresses I to I+X", () => {
+            const addr = ROM_START + 100;
+            setRegister(0, 0xF0);
+            setRegister(1, 0xF1);
+            setRegister(2, 0xF2);
+            setRegister(3, 0xF3);
+            setRegisterI(addr);
+            emulator.decodeAndExecute(0xF255);
+            expect(read(addr + 0)).toBe(0xF0);
+            expect(read(addr + 1)).toBe(0xF1);
+            expect(read(addr + 2)).toBe(0xF2);
+            expect(read(addr + 3)).toBe(0); // unchanged
+        });
+    });
 });
