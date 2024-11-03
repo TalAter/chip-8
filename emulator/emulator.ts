@@ -65,7 +65,7 @@ const decodeAndExecute = (opcode: number): void => {
                     const spriteLine = memory.read(i + row);
                     for (let column = 0; column < 8; column++) {
                         const newState =
-                            (spriteLine >> 7 - column & 0x00000001) as Bit;
+                            (spriteLine >> 7 - column & 0x1) as Bit;
                         const oldState = display.getPixel(x + column, y + row);
                         if (newState) {
                             if (oldState) {
