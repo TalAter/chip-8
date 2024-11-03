@@ -136,6 +136,17 @@ describe("decodeAndExecute", () => {
         });
     });
 
+    describe("8XY0", () => {
+        it("sets VX to value of VY", () => {
+            setRegister(0, 30);
+            setRegister(1, 33);
+
+            emulator.decodeAndExecute(0x8010);
+            expect(getRegister(0)).toBe(33);
+            expect(getRegister(1)).toBe(33);
+        });
+    });
+
     describe("8XY3", () => {
         it("sets VX to the XOR of VX and VY. Does not affect VY", () => {
             const testCases = [
