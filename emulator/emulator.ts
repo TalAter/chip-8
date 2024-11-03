@@ -1,4 +1,5 @@
 import { Bit, Uint16, Uint4 } from "../types.ts";
+import { UnknownOpcodeError } from "../errors/errors.ts";
 import * as cartridge from "../cartridge/cartridge.ts";
 import * as memory from "../memory/memory.ts";
 import * as display from "../display/display.ts";
@@ -26,7 +27,7 @@ const decodeAndExecute = (opcode: Uint16): void => {
             if (opcode === 0x00e0) {
                 display.clear();
             } else {
-                throw new Error(`Unknown OPCode ${opcode.toString(16)}`);
+                throw new UnknownOpcodeError(opcode);
             }
             break;
         case 1:
@@ -90,7 +91,7 @@ const decodeAndExecute = (opcode: Uint16): void => {
             }
             break;
         default:
-            throw new Error(`Unknown OPCode ${opcode.toString(16)}`);
+            throw new UnknownOpcodeError(opcode);
     }
 };
 
