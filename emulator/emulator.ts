@@ -1,4 +1,4 @@
-import { Bit } from "../types.ts";
+import { Bit, Uint16, Uint4 } from "../types.ts";
 import * as cartridge from "../cartridge/cartridge.ts";
 import * as memory from "../memory/memory.ts";
 import * as display from "../display/display.ts";
@@ -11,14 +11,14 @@ const MICROSECONDS_PER_RENDER = 1_000_000 / FRAME_RATE;
 
 const getCurrentTime = (): number => performance.now() * 1000;
 
-const nibbleOpcode = (opcode: number): number[] => [
+const nibbleOpcode = (opcode: Uint16): Uint4[] => [
     (opcode & 0xF000) >> 12,
     (opcode & 0x0F00) >> 8,
     (opcode & 0x00F0) >> 4,
     opcode & 0x000F,
 ];
 
-const decodeAndExecute = (opcode: number): void => {
+const decodeAndExecute = (opcode: Uint16): void => {
     const [nib1, nib2, nib3, nib4] = nibbleOpcode(opcode);
     switch (nib1) {
         case 0:
