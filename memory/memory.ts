@@ -1,11 +1,12 @@
+import type { FontData, MemoryAddress, Uint16 } from "../types.ts";
+
 const memoryBuffer: ArrayBuffer = new ArrayBuffer(4096);
 const memory: Uint8Array = new Uint8Array(memoryBuffer);
-const ROM_START = 0x200;
-const FONT_START = 0x050;
+const ROM_START: MemoryAddress = 0x200;
+const FONT_START: MemoryAddress = 0x050;
 
 // The Program Counter. Points at the current instruction in memory
-const PC = new Uint16Array(1);
-PC[0] = ROM_START;
+let PC: Uint16 = ROM_START;
 
 // The Vx registers
 // 16 general purpose 8-bit registers
@@ -15,7 +16,14 @@ const registers = new Uint8Array(16);
 // A single 16-bit register
 const registerI = new Uint16Array(1);
 
-const storeFont = (data: number[]): void => {
+/**
+ * Stores font data starting at the font memory location (0x050)
+ * @param data - Font sprite data for characters
+ */
+const storeFont = (data: FontData): void => {
+  if (data.some((n) => n < 0 || n > 0xFF)) {
+    throw new Error("Font data must consist of 8-bit numbers (0x00-0xFF)");
+  }
   memory.set(data, FONT_START);
 };
 
@@ -23,7 +31,7 @@ const storeROM = (data: Uint8Array): void => {
   memory.set(data, ROM_START);
 };
 
-const read = (address: number): number => {
+const read = (address: MemoryAddress): number => {
   return memory[address];
 };
 
@@ -32,16 +40,16 @@ const reset = (): void => {
 };
 
 const fetch = (): number => {
-  const opcodes = (memory[PC[0]] << 8) | memory[PC[0] + 1];
-  PC[0] += 2 & 0xFFFF; // bitwise & to ensure PC stays 16-bit after increment
+  const opcodes = (memory[PC] << 8) | memory[PC + 1];
+  PC += 2 & 0xFFFF; // bitwise & to ensure PC stays 16-bit after increment
   return opcodes;
 };
 
-const setPC = (addr: number): void => {
-  PC[0] = addr & 0xFFFF;
+const setPC = (addr: MemoryAddress): void => {
+  PC = addr & 0xFFFF;
 };
 
-const getPC = (): number => PC[0];
+const getPC = (): MemoryAddress => PC;
 
 const getRegister = (x: number): number => {
   return registers[x];
