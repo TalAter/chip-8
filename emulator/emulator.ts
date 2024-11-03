@@ -54,7 +54,7 @@ const decodeAndExecute = (opcode: Uint16): void => {
             {
                 const x = memory.getRegister(nib2) & (display.WIDTH - 1); //  We binary AND x with WIDTH so it wraps around
                 const y = memory.getRegister(nib3) & (display.HEIGHT - 1); // We binary AND y with HEIGHT so it wraps around
-                const height = opcode & 0x000f;
+                const height = nib4;
 
                 // Set the VF register to 0
                 memory.setRegister(0xF, 0);
