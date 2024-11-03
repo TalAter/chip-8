@@ -47,6 +47,10 @@ const read = (address: MemoryAddress): Uint8 => {
   return memory[address];
 };
 
+const write = (address: MemoryAddress, value: Uint8Array): void => {
+  memory.set(value, address);
+};
+
 const reset = (): void => {
   memory.fill(0);
 };
@@ -155,4 +159,5 @@ export {
   stackReset,
   storeFont,
   storeROM,
+  write,
 };
