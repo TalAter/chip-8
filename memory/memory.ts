@@ -1,4 +1,10 @@
-import type { FontData, MemoryAddress, Uint16 } from "../types.ts";
+import type {
+  FontData,
+  MemoryAddress,
+  Uint16,
+  Uint4,
+  Uint8,
+} from "../types.ts";
 
 const memoryBuffer: ArrayBuffer = new ArrayBuffer(4096);
 const memory: Uint8Array = new Uint8Array(memoryBuffer);
@@ -14,7 +20,7 @@ const registers = new Uint8Array(16);
 
 // The I register
 // A single 16-bit register
-const registerI = new Uint16Array(1);
+let registerI: Uint16 = 0;
 
 /**
  * Stores font data starting at the font memory location (0x050)
@@ -31,7 +37,7 @@ const storeROM = (data: Uint8Array): void => {
   memory.set(data, ROM_START);
 };
 
-const read = (address: MemoryAddress): number => {
+const read = (address: MemoryAddress): Uint8 => {
   return memory[address];
 };
 
@@ -39,7 +45,7 @@ const reset = (): void => {
   memory.fill(0);
 };
 
-const fetch = (): number => {
+const fetch = (): Uint16 => {
   const opcodes = (memory[PC] << 8) | memory[PC + 1];
   PC += 2 & 0xFFFF; // bitwise & to ensure PC stays 16-bit after increment
   return opcodes;
@@ -51,7 +57,7 @@ const setPC = (addr: MemoryAddress): void => {
 
 const getPC = (): MemoryAddress => PC;
 
-const getRegister = (x: number): number => {
+const getRegister = (x: Uint4): Uint8 => {
   return registers[x];
 };
 
@@ -59,16 +65,16 @@ const resetRegisters = (): void => {
   registers.fill(0);
 };
 
-const setRegister = (x: number, value: number): void => {
+const setRegister = (x: Uint4, value: Uint8): void => {
   registers[x] = value;
 };
 
-const getRegisterI = (): number => {
-  return registerI[0];
+const getRegisterI = (): Uint16 => {
+  return registerI;
 };
 
-const setRegisterI = (value: number): void => {
-  registerI[0] = value;
+const setRegisterI = (value: Uint16): void => {
+  registerI = value & 0xFFFF;
 };
 
 export { FONT_START, ROM_START };

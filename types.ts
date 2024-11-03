@@ -1,6 +1,9 @@
 /** Single binary digit (0 or 1) */
 export type Bit = 0 | 1;
 
+/** 4-bit unsigned integer (0x0-0xF) */
+export type Uint4 = number;
+
 /** 8-bit unsigned integer (0x00-0xFF) */
 export type Uint8 = number;
 
