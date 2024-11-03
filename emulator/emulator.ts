@@ -26,7 +26,7 @@ const decodeAndExecute = (opcode: Uint16): void => {
             if (opcode === 0x00e0) {
                 display.clear();
             } else {
-                throw (new Error(`Unknown OPCode ${opcode}`));
+                throw new Error(`Unknown OPCode ${opcode.toString(16)}`);
             }
             break;
         case 1:
@@ -90,7 +90,7 @@ const decodeAndExecute = (opcode: Uint16): void => {
             }
             break;
         default:
-            throw (new Error(`Unknown OPCode ${opcode}`));
+            throw new Error(`Unknown OPCode ${opcode.toString(16)}`);
     }
 };
 
