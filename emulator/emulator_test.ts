@@ -17,6 +17,7 @@ import { FONT_START, ROM_START } from "../memory/memory.ts";
 import * as emulator from "../emulator/emulator.ts";
 import { clear, getPixel, setPixel } from "../display/display.ts";
 import { font } from "../fonts/font.ts";
+import type { Uint8 } from "../types.ts";
 
 describe("nibbleOpcode", () => {
     it("nibbles a 16 bit to four 4 bit nibbles", () => {
@@ -87,6 +88,41 @@ describe("decodeAndExecute", () => {
             expect(getRegisterI()).toBe(0x010);
             emulator.decodeAndExecute(0xAFFF);
             expect(getRegisterI()).toBe(0xFFF);
+        });
+    });
+
+    describe("CXNN", () => {
+        it("generates a random number and puts the result in VX", () => {
+            const randos: Uint8[] = [];
+
+            emulator.decodeAndExecute(0xC2FF);
+            randos.push(getRegister(2));
+
+            emulator.decodeAndExecute(0xC2FF);
+            randos.push(getRegister(2));
+
+            expect(typeof randos[0]).toBe("number");
+            expect(typeof randos[1]).toBe("number");
+            // @TODO: Fix non-deterministic test. Two random numbers between 0-255 have a 1/256 chance of being equal
+            expect(randos[0]).not.toEqual(randos[1]);
+        });
+
+        it("correctly binary ANDs it with the value NN", () => {
+            const randos: Uint8[] = [];
+
+            for (let i = 0; i < 10; i++) {
+                emulator.decodeAndExecute(0xC1F0);
+                randos.push(getRegister(1));
+            }
+
+            // NN is 0xF0 which is binary 11110000, so all numbers should:
+            // 1. Be divisible by 16 (last 4 bits must be 0)
+            // 2. Be between 0 and 240 (0xF0)
+            randos.forEach((num) => {
+                expect(num % 16).toBe(0);
+                expect(num).toBeLessThanOrEqual(240);
+                expect(num).toBeGreaterThanOrEqual(0);
+            });
         });
     });
 

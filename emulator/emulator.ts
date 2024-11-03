@@ -1,4 +1,4 @@
-import { Bit, Uint16, Uint4 } from "../types.ts";
+import { Bit, Uint16, Uint4, Uint8 } from "../types.ts";
 import { UnknownOpcodeError } from "../errors/errors.ts";
 import * as cartridge from "../cartridge/cartridge.ts";
 import * as memory from "../memory/memory.ts";
@@ -48,6 +48,21 @@ const decodeAndExecute = (opcode: Uint16): void => {
         case 0xA:
             // Opcode: ANNN (sets register I to NNN)
             memory.setRegisterI(opcode & 0x0FFF);
+            break;
+        case 0xC:
+            // Opcode: CXNN
+            // 1. Generate random number (0-255)
+            // 2. Bitwise AND it with NN
+            // 3. Store result in register VX
+            {
+                // Get a random number between 0-255 (8 bits)
+                const random: Uint8 = Math.floor(Math.random() * 256) &
+                    // AND it with NN from opcode (lower 8 bits)
+                    (opcode & 0x00FF);
+
+                // Store result in register VX
+                memory.setRegister(nib2, random);
+            }
             break;
         case 0xD:
             // Opcode: DXYN (draw sprite to screen)
