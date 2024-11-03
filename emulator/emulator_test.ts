@@ -10,6 +10,9 @@ import {
     setPC,
     setRegister,
     setRegisterI,
+    stackLength,
+    stackPeek,
+    stackReset,
     storeFont,
     storeROM,
 } from "../memory/memory.ts";
@@ -32,6 +35,7 @@ describe("nibbleOpcode", () => {
 describe("decodeAndExecute", () => {
     beforeEach(() => {
         resetRegisters();
+        stackReset();
         reset();
         clear();
         storeROM(new Uint8Array([0x00, 0xe0, 0xa2, 0x2a]));
@@ -55,6 +59,21 @@ describe("decodeAndExecute", () => {
             expect(getPC()).toBe(0x345);
             emulator.decodeAndExecute(0x1ada);
             expect(getPC()).toBe(0xada);
+        });
+    });
+
+    describe("2NNN", () => {
+        it("sets the Program Counter to NNN", () => {
+            expect(getPC()).toBe(ROM_START);
+            emulator.decodeAndExecute(0x22D4);
+            expect(getPC()).toBe(0x2D4);
+        });
+        it("pushes the previous Program Counter location to the top of the stack", () => {
+            expect(getPC()).toBe(ROM_START);
+            expect(stackLength()).toBe(0);
+            emulator.decodeAndExecute(0x22D4);
+            expect(stackLength()).toBe(1);
+            expect(stackPeek()).toBe(ROM_START);
         });
     });
 
