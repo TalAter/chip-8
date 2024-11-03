@@ -16,3 +16,17 @@ export class UnknownOpcodeError extends Error {
         Object.setPrototypeOf(this, UnknownOpcodeError.prototype);
     }
 }
+
+export class StackOverflowError extends Error {
+    constructor() {
+        super("Stack overflow");
+        this.name = "StackOverflowError";
+    }
+}
+
+export class StackUnderflowError extends Error {
+    constructor() {
+        super("Stack underflow");
+        this.name = "StackUnderflowError";
+    }
+}

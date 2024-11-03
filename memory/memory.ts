@@ -1,3 +1,4 @@
+import { StackOverflowError, StackUnderflowError } from "../errors/errors.ts";
 import type {
   FontData,
   MemoryAddress,
@@ -10,6 +11,11 @@ const memoryBuffer: ArrayBuffer = new ArrayBuffer(4096);
 const memory: Uint8Array = new Uint8Array(memoryBuffer);
 const ROM_START: MemoryAddress = 0x200;
 const FONT_START: MemoryAddress = 0x050;
+/** Maximum size of the CHIP-8 stack */
+const STACK_SIZE = 16;
+
+/** Internal stack for storing return addresses */
+const stack: Uint16[] = [];
 
 // The Program Counter. Points at the current instruction in memory
 let PC: Uint16 = ROM_START;
@@ -77,6 +83,59 @@ const setRegisterI = (value: Uint16): void => {
   registerI = value & 0xFFFF;
 };
 
+/**
+ * Pushes an address onto the stack
+ * @param addr - 16-bit address to store
+ * @throws {StackOverflowError} If stack would exceed maximum size of 16
+ */
+const stackPush = (addr: Uint16): void => {
+  if (stack.length >= STACK_SIZE) {
+    throw new StackOverflowError();
+  }
+  stack.push(addr);
+};
+
+/**
+ * Removes and returns the top address from the stack
+ * @returns The last address pushed to the stack
+ * @throws {StackUnderflowError} If stack is empty
+ */
+const stackPop = (): Uint16 => {
+  if (stack.length === 0) {
+    throw new StackUnderflowError();
+  }
+  return stack.pop()!;
+};
+
+/**
+ * Resets the stack to empty state
+ *
+ * Used for testing only
+ */
+const stackReset = (): void => {
+  stack.length = 0;
+};
+
+/**
+ * Returns current number of items in the stack
+ *
+ * Used for testing only
+ * @returns Number of items currently in stack (0-16)
+ */
+const stackLength = (): Uint4 => {
+  return stack.length as Uint4;
+};
+
+/**
+ * Returns the top value of the stack without removing it
+ *
+ * Used for testing only
+ * @returns The last address pushed to the stack, or undefined if stack is empty
+ */
+const stackPeek = (): Uint16 | undefined => {
+  return stack.at(-1);
+};
+
 export { FONT_START, ROM_START };
 export {
   fetch,
@@ -89,6 +148,11 @@ export {
   setPC,
   setRegister,
   setRegisterI,
+  stackLength,
+  stackPeek,
+  stackPop,
+  stackPush,
+  stackReset,
   storeFont,
   storeROM,
 };
