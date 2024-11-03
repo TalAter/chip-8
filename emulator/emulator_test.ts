@@ -58,6 +58,28 @@ describe("decodeAndExecute", () => {
         });
     });
 
+    describe("3XNN", () => {
+        it("skips one instruction if the value in VX is equal to NN", () => {
+            const PC = getPC();
+            setRegister(2, 0x01);
+            emulator.decodeAndExecute(0x3201);
+            // PC increments by 2 in this test because we're only testing the execute phase
+            // where the skip occurs. In a normal Fetch-Decode-Execute cycle, PC would
+            // be +4 total (+2 from fetch, +2 from skip)
+            expect(getPC()).toBe(PC + 2);
+        });
+
+        it("does not skip an instruction if the value in VX is not equal to NN", () => {
+            const PC = getPC();
+            setRegister(2, 0xaf);
+            emulator.decodeAndExecute(0x3201);
+            // PC doesn't change in this test because we're only testing the execute phase.
+            // In a normal Fetch-Decode-Execute cycle, PC would have already been
+            // incremented by 2 during fetch.
+            expect(getPC()).toBe(PC);
+        });
+    });
+
     describe("6XNN", () => {
         it("sets register X to NN", () => {
             expect(getRegister(0x3)).toBe(0);
