@@ -61,9 +61,17 @@ const decodeAndExecute = (opcode: Uint16): void => {
 
                 // Get sprite from memory and draw it
                 const i = memory.getRegisterI();
-                for (let row = 0; row < height; row++) {
+                for (
+                    let row = 0;
+                    row < height && y + row < display.HEIGHT;
+                    row++
+                ) {
                     const spriteLine = memory.read(i + row);
-                    for (let column = 0; column < 8; column++) {
+                    for (
+                        let column = 0;
+                        column < 8 && x + column < display.WIDTH;
+                        column++
+                    ) {
                         const newState =
                             (spriteLine >> 7 - column & 0x1) as Bit;
                         const oldState = display.getPixel(x + column, y + row);
