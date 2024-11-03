@@ -133,7 +133,14 @@ const decodeAndExecute = (opcode: Uint16): void => {
             }
             break;
         case 0xF:
-            if (nib3 === 3 && nib4 === 3) {
+            if (nib3 === 1 && nib4 === 0xE) {
+                // Opcode: FX1E (The index register I will get the value in VX added to it)
+                // Adds the value in register VX to register I
+                // If result exceeds 0xFFF (12 bits), set I to 1
+                const newValue = memory.getRegisterI() +
+                    memory.getRegister(nib2);
+                memory.setRegisterI(newValue <= 0xfff ? newValue : 1);
+            } else if (nib3 === 3 && nib4 === 3) {
                 // Opcode: FX33 (Store the binary-coded decimal representation of VX at addresses I, I+1, and I+2)
                 const number = memory.getRegister(nib2);
                 const i = memory.getRegisterI();

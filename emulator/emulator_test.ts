@@ -297,6 +297,30 @@ describe("decodeAndExecute", () => {
         it.skip("wraps around the y and x values if they are larger than the screen", () => {});
     });
 
+    describe("FX1E", () => {
+        it("adds the value in VX to the index register", () => {
+            const x = 3;
+            const testCases = [
+                { vx: 0xA, i: 0, expected: 0xA },
+                { vx: 0, i: 0, expected: 0 },
+                { vx: 7, i: 55, expected: 62 },
+                { vx: 1, i: 0xFFE, expected: 0xFFF }, // Maximum value
+                { vx: 2, i: 0xFFE, expected: 1 }, // Small overflow beyond 12 bits
+                { vx: 100, i: 0xFFF, expected: 1 }, // Large overflow bwyond 12 bits
+                { vx: 0xFF, i: 0xFF0, expected: 1 }, // Overflow with max VX
+                { vx: 1, i: 0xFFF, expected: 1 }, // Overflow from max I
+            ];
+
+            testCases.forEach(({ vx, i, expected }) => {
+                setRegister(x, vx);
+                setRegisterI(i);
+
+                emulator.decodeAndExecute(0xF31E);
+                expect(getRegisterI()).toBe(expected);
+            });
+        });
+    });
+
     describe("FX33", () => {
         it("takes the number in VX and stores each of each decimal digits in the address from register I to I+2", () => {
             const testCases = [
