@@ -48,6 +48,9 @@ const read = (address: MemoryAddress): Uint8 => {
 };
 
 const write = (address: MemoryAddress, value: Uint8Array): void => {
+  if (address + value.length > memoryBuffer.byteLength) {
+    throw new Error("Attempting to write outside memory bounds");
+  }
   memory.set(value, address);
 };
 
