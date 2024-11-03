@@ -1,3 +1,4 @@
+import { Bit } from "../types.ts";
 import * as cartridge from "../cartridge/cartridge.ts";
 import * as memory from "../memory/memory.ts";
 import * as display from "../display/display.ts";
@@ -46,6 +47,39 @@ const decodeAndExecute = (opcode: number): void => {
         case 0xA:
             // Opcode: ANNN (sets register I to NNN)
             memory.setRegisterI(opcode & 0x0FFF);
+            break;
+        case 0xD:
+            // Opcode: DXYN (draw sprite to screen)
+            // Draw an N pixels tall sprite from the memory location that the I index register is holding to the screen, at the horizontal X coordinate in VX and the Y coordinate in VY
+            {
+                const x = memory.getRegister(nib2) & (display.WIDTH - 1); //  We binary AND x with WIDTH so it wraps around
+                const y = memory.getRegister(nib3) & (display.HEIGHT - 1); // We binary AND y with HEIGHT so it wraps around
+                const height = opcode & 0x000f;
+
+                // Set the VF register to 0
+                memory.setRegister(0xF, 0);
+
+                // Get sprite from memory and draw it
+                const i = memory.getRegisterI();
+                for (let row = 0; row < height; row++) {
+                    const spriteLine = memory.read(i + row);
+                    for (let column = 0; column < 8; column++) {
+                        const newState =
+                            (spriteLine >> 7 - column & 0x00000001) as Bit;
+                        const oldState = display.getPixel(x + column, y + row);
+                        if (newState) {
+                            if (oldState) {
+                                memory.setRegister(0xF, 1);
+                            }
+                            display.setPixel(
+                                x + column,
+                                y + row,
+                                (oldState ^ 1) as Bit,
+                            );
+                        }
+                    }
+                }
+            }
             break;
         default:
             throw (new Error(`Unknown OPCode ${opcode}`));

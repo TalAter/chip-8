@@ -5,13 +5,18 @@ import {
     getPC,
     getRegister,
     getRegisterI,
+    reset,
     resetRegisters,
     setPC,
+    setRegister,
+    setRegisterI,
+    storeFont,
     storeROM,
 } from "../memory/memory.ts";
-import { ROM_START } from "../memory/memory.ts";
+import { FONT_START, ROM_START } from "../memory/memory.ts";
 import * as emulator from "../emulator/emulator.ts";
-import { getPixel, setPixel } from "../display/display.ts";
+import { clear, getPixel, setPixel } from "../display/display.ts";
+import { font } from "../fonts/font.ts";
 
 describe("nibbleOpcode", () => {
     it("nibbles a 16 bit to four 4 bit nibbles", () => {
@@ -26,8 +31,9 @@ describe("nibbleOpcode", () => {
 describe("decodeAndExecute", () => {
     beforeEach(() => {
         resetRegisters();
-        const cartridgeData = new Uint8Array([0x00, 0xe0, 0xa2, 0x2a]);
-        storeROM(cartridgeData);
+        reset();
+        clear();
+        storeROM(new Uint8Array([0x00, 0xe0, 0xa2, 0x2a]));
         setPC(ROM_START);
     });
 
@@ -82,5 +88,95 @@ describe("decodeAndExecute", () => {
             emulator.decodeAndExecute(0xAFFF);
             expect(getRegisterI()).toBe(0xFFF);
         });
+    });
+
+    describe("DXYN", () => {
+        const x = 3;
+        const y = 2;
+
+        beforeEach(() => {
+            storeFont(font);
+            clear();
+            setRegisterI(FONT_START);
+            setRegister(0x3, x);
+            setRegister(0xA, y);
+        });
+
+        it("draws a sprite stored in I register to x and y", () => {
+            // Run the instruction
+            emulator.decodeAndExecute(0xD3A5);
+
+            // Define the "0" glyph pattern for testing
+            const expectedResult = [
+                [1, 1, 1, 1, 0], // Row 1 of the 0 glyph
+                [1, 0, 0, 1, 0], // Row 2 of the 0 glyph
+                [1, 0, 0, 1, 0], // Row 3 of the 0 glyph
+                [1, 0, 0, 1, 0], // Row 4 of the 0 glyph
+                [1, 1, 1, 1, 0], // Row 5 of the 0 glyph
+                [0, 0, 0, 0, 0], // Row 6 should not be part of the glyph
+            ];
+
+            // Check each row of the sprite pattern
+            expectedResult.forEach((row, rowIndex) => {
+                row.forEach((state, colIndex) => {
+                    expect(getPixel(x + colIndex, y + rowIndex)).toBe(state);
+                });
+            });
+        });
+
+        it("limits the height of the sprite to draw to N rows", () => {
+            // Run the instruction
+            emulator.decodeAndExecute(0xD3A2);
+
+            // Define the "0" glyph pattern for testing
+            const expectedResult = [
+                [1, 1, 1, 1, 0], // Row 1 of the 0 glyph
+                [1, 0, 0, 1, 0], // Row 2 of the 0 glyph
+                [0, 0, 0, 0, 0], // Row 3 of the 0 glyph should not be drawn
+                [0, 0, 0, 0, 0], // Row 4 of the 0 glyph should not be drawn
+            ];
+
+            // Check each row of the sprite pattern
+            expectedResult.forEach((row, rowIndex) => {
+                row.forEach((state, colIndex) => {
+                    expect(getPixel(x + colIndex, y + rowIndex)).toBe(state);
+                });
+            });
+        });
+
+        it("will flip pixels that are already on to off if they are in the sprite", () => {
+            // draw a 0 glyph
+            emulator.decodeAndExecute(0xD3A5);
+
+            // draw the top 3 lines of the 7 glyph
+            setRegisterI(FONT_START + 7 * 5);
+            emulator.decodeAndExecute(0xD3A3);
+
+            // Expected result after drawing the top 3 lines of the 7 glyph on a 0 glyph
+            const expectedResult = [
+                [0, 0, 0, 0, 0],
+                [1, 0, 0, 0, 0],
+                [1, 0, 1, 1, 0],
+                [1, 0, 0, 1, 0],
+                [1, 1, 1, 1, 0],
+            ];
+
+            // Check each row of the sprite pattern
+            expectedResult.forEach((row, rowIndex) => {
+                row.forEach((state, colIndex) => {
+                    expect(getPixel(x + colIndex, y + rowIndex)).toBe(state);
+                });
+            });
+        });
+
+        it("sets VF register to 1 if any pixels are turned off by this", () => {
+            expect(getRegister(0xF)).toBe(0);
+            emulator.decodeAndExecute(0xD3A5);
+            expect(getRegister(0xF)).toBe(0);
+            emulator.decodeAndExecute(0xD3A5);
+            expect(getRegister(0xF)).toBe(1);
+        });
+
+        it.skip("wraps around the y and x values if they are larger than the screen", () => {});
     });
 });
