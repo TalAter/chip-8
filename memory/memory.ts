@@ -47,12 +47,12 @@ const reset = (): void => {
 
 const fetch = (): Uint16 => {
   const opcodes = (memory[PC] << 8) | memory[PC + 1];
-  PC += 2 & 0xFFFF; // bitwise & to ensure PC stays 16-bit after increment
+  setPC(PC + 2);
   return opcodes;
 };
 
 const setPC = (addr: MemoryAddress): void => {
-  PC = addr & 0xFFFF;
+  PC = addr & 0xFFFF; // bitwise & to ensure PC stays 16-bit after increment
 };
 
 const getPC = (): MemoryAddress => PC;
