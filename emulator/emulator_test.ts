@@ -135,6 +135,32 @@ describe("decodeAndExecute", () => {
         });
     });
 
+    describe("8XY3", () => {
+        it("sets VX to the XOR of VX and VY. Does not affect VY", () => {
+            const testCases = [
+                { input: [1, 1], expected: [0, 1] },
+                { input: [0, 0], expected: [0, 0] },
+                { input: [1, 0], expected: [1, 0] },
+                { input: [0, 1], expected: [1, 1] },
+                {
+                    input: [0b11111111, 0b00001111],
+                    expected: [0b11110000, 0b00001111],
+                },
+                {
+                    input: [0b00100001, 0b10001100],
+                    expected: [0b10101101, 0b10001100],
+                },
+            ];
+            testCases.forEach(({ input, expected }) => {
+                setRegister(0, input[0]);
+                setRegister(1, input[1]);
+                emulator.decodeAndExecute(0x8013);
+                expect(getRegister(0)).toBe(expected[0]);
+                expect(getRegister(1)).toBe(expected[1]);
+            });
+        });
+    });
+
     describe("ANNN", () => {
         it("sets register I to NNN", () => {
             expect(getRegisterI()).toBe(0);

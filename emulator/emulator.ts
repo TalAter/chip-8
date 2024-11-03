@@ -59,6 +59,19 @@ const decodeAndExecute = (opcode: Uint16): void => {
                 memory.getRegister(nib2) + opcode & 0x00FF,
             );
             break;
+        case 8:
+            switch (nib4) {
+                case 3:
+                    // Opcode: 8XY3 (Sets VX to VX XOR VY)
+                    memory.setRegister(
+                        nib2,
+                        memory.getRegister(nib2) ^ memory.getRegister(nib3),
+                    );
+                    break;
+                default:
+                    throw new UnknownOpcodeError(opcode);
+            }
+            break;
         case 0xA:
             // Opcode: ANNN (sets register I to NNN)
             memory.setRegisterI(opcode & 0x0FFF);
