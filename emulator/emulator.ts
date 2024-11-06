@@ -4,7 +4,11 @@ import * as cartridge from "../cartridge/cartridge.ts";
 import * as memory from "../memory/memory.ts";
 import * as display from "../display/display.ts";
 import { font, FONT_BYTES_PER_CHAR } from "../fonts/font.ts";
-import { decrementTimers, getSoundTimer } from "../timers/timers.ts";
+import {
+    decrementTimers,
+    getSoundTimer,
+    setSoundTimer,
+} from "../timers/timers.ts";
 import { beep } from "../sound/sound.ts";
 
 const CYCLES_PER_SECOND = 700; // 700 Hz
@@ -139,7 +143,10 @@ const decodeAndExecute = (opcode: Uint16): void => {
             }
             break;
         case 0xF:
-            if (nib3 === 1 && nib4 === 0xE) {
+            if (nib3 === 1 && nib4 === 8) {
+                // Opcode: FX18 (sets the sound timer to the value in VX)
+                setSoundTimer(memory.getRegister(nib2));
+            } else if (nib3 === 1 && nib4 === 0xE) {
                 // Opcode: FX1E (The index register I will get the value in VX added to it)
                 // Adds the value in register VX to register I
                 // If result exceeds 0xFFF (12 bits), set I to 1

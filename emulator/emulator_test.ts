@@ -24,6 +24,7 @@ import * as emulator from "../emulator/emulator.ts";
 import { clear, getPixel, setPixel } from "../display/display.ts";
 import { font, FONT_BYTES_PER_CHAR } from "../fonts/font.ts";
 import type { Uint8 } from "../types.ts";
+import { getSoundTimer, resetTimers } from "../timers/timers.ts";
 
 describe("nibbleOpcode", () => {
     it("nibbles a 16 bit to four 4 bit nibbles", () => {
@@ -39,6 +40,7 @@ describe("decodeAndExecute", () => {
     beforeEach(() => {
         resetRegisters();
         resetRegisterI();
+        resetTimers();
         stackReset();
         reset();
         clear();
@@ -308,6 +310,14 @@ describe("decodeAndExecute", () => {
         });
 
         it.skip("wraps around the y and x values if they are larger than the screen", () => {});
+    });
+
+    describe("FX18", () => {
+        it("sets the sound timer to the value in VX", () => {
+            setRegister(1, 3);
+            emulator.decodeAndExecute(0xF118);
+            expect(getSoundTimer()).toBe(3);
+        });
     });
 
     describe("FX1E", () => {
