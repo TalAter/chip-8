@@ -230,6 +230,28 @@ describe("decodeAndExecute", () => {
         });
     });
 
+    describe("8XY4", () => {
+        it("VX is set to the value of VX + VY. VF is set to 1 if result larger than 255 else 0", () => {
+            const testCases = [
+                { input: [3, 1], expected: [4, 1, 0] },
+                { input: [0, 0], expected: [0, 0, 0] },
+                { input: [1, 0], expected: [1, 0, 0] },
+                { input: [0xF0, 0xF], expected: [0xFF, 0xF, 0] },
+                { input: [0xFF, 0xFF], expected: [0xFE, 0xFF, 1] },
+                { input: [0xF0, 0xEF], expected: [0xDF, 0xEF, 1] },
+                { input: [255, 1], expected: [0, 1, 1] },
+            ];
+            testCases.forEach(({ input, expected }) => {
+                setRegister(0, input[0]);
+                setRegister(1, input[1]);
+                emulator.decodeAndExecute(0x8014);
+                expect(getRegister(0)).toBe(expected[0]);
+                expect(getRegister(1)).toBe(expected[1]);
+                expect(getRegister(0xF)).toBe(expected[2]);
+            });
+        });
+    });
+
     describe("ANNN", () => {
         it("sets register I to NNN", () => {
             expect(getRegisterI()).toBe(0);

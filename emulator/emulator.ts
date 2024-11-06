@@ -93,6 +93,21 @@ const decodeAndExecute = (opcode: Uint16): void => {
                         memory.getRegister(nib2) ^ memory.getRegister(nib3),
                     );
                     break;
+                case 4:
+                    // Opcode: 8XY4 (VX is set to the value of VX + VY. VF is set to 1 if result larger than 255 else 0)
+                    // Only the lowest 8 bits of the result are kept, and stored in Vx.
+                    {
+                        const result = memory.getRegister(nib2) +
+                            memory.getRegister(nib3);
+                        if (result > 0xff) {
+                            memory.setRegister(0xF, 1);
+                        } else {
+                            memory.setRegister(0xF, 0);
+                        }
+
+                        memory.setRegister(nib2, result & 0xFF);
+                    }
+                    break;
                 default:
                     throw new UnknownOpcodeError(opcode);
             }
