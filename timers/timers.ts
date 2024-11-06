@@ -22,6 +22,15 @@ const decrementTimers = (): void => {
 };
 
 /**
+ * Resets both timers.
+ * For testing purposes
+ */
+const resetTimers = (): void => {
+    delayTimer = 0;
+    soundTimer = 0;
+};
+
+/**
  * Sets the delay timer value, clamped to Uint8 range [0, 255]
  * @param {Uint8} value - The value to set the delay timer to
  */
@@ -57,6 +66,7 @@ export {
     decrementTimers,
     getDelayTimer,
     getSoundTimer,
+    resetTimers,
     setDelayTimer,
     setSoundTimer,
 };
