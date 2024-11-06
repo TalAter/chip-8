@@ -90,6 +90,10 @@ const setRegisterI = (value: Uint16): void => {
   registerI = value & 0xFFFF;
 };
 
+const resetRegisterI = (): void => {
+  registerI = 0;
+};
+
 /**
  * Pushes an address onto the stack
  * @param addr - 16-bit address to store
@@ -151,6 +155,7 @@ export {
   getRegisterI,
   read,
   reset,
+  resetRegisterI,
   resetRegisters,
   setPC,
   setRegister,

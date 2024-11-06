@@ -7,6 +7,7 @@ import {
     getRegisterI,
     read,
     reset,
+    resetRegisterI,
     resetRegisters,
     setPC,
     setRegister,
@@ -37,6 +38,7 @@ describe("nibbleOpcode", () => {
 describe("decodeAndExecute", () => {
     beforeEach(() => {
         resetRegisters();
+        resetRegisterI();
         stackReset();
         reset();
         clear();
