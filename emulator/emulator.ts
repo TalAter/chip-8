@@ -79,6 +79,13 @@ const decodeAndExecute = (opcode: Uint16): void => {
                     // Opcode: 8XY0 (sets VX to value of VY)
                     memory.setRegister(nib2, memory.getRegister(nib3));
                     break;
+                case 2:
+                    // Opcode: 8XY2 (sets VX to VX AND VY)
+                    memory.setRegister(
+                        nib2,
+                        memory.getRegister(nib2) & memory.getRegister(nib3),
+                    );
+                    break;
                 case 3:
                     // Opcode: 8XY3 (Sets VX to VX XOR VY)
                     memory.setRegister(
