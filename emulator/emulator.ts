@@ -4,6 +4,7 @@ import * as cartridge from "../cartridge/cartridge.ts";
 import * as memory from "../memory/memory.ts";
 import * as display from "../display/display.ts";
 import { font, FONT_BYTES_PER_CHAR } from "../fonts/font.ts";
+import { decrementTimers, getSoundTimer } from "../timers/timers.ts";
 
 const CYCLES_PER_SECOND = 700; // 700 Hz
 const FRAME_RATE = 60;
@@ -210,6 +211,7 @@ const mainLoop = async (): Promise<void> => {
 
         // Render
         if (currentTime - lastRender >= MICROSECONDS_PER_RENDER) {
+            decrementTimers();
             lastRender = getCurrentTime();
             display.render();
         }
