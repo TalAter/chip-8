@@ -10,6 +10,7 @@ import {
     setSoundTimer,
 } from "../timers/timers.ts";
 import { beep } from "../sound/sound.ts";
+import { setDelayTimer } from "../timers/timers.ts";
 
 const CYCLES_PER_SECOND = 700; // 700 Hz
 const FRAME_RATE = 60;
@@ -143,7 +144,10 @@ const decodeAndExecute = (opcode: Uint16): void => {
             }
             break;
         case 0xF:
-            if (nib3 === 1 && nib4 === 8) {
+            if (nib3 === 1 && nib4 === 5) {
+                // Opcode: FX15 (sets the delay timer to the value in VX)
+                setDelayTimer(memory.getRegister(nib2));
+            } else if (nib3 === 1 && nib4 === 8) {
                 // Opcode: FX18 (sets the sound timer to the value in VX)
                 setSoundTimer(memory.getRegister(nib2));
             } else if (nib3 === 1 && nib4 === 0xE) {
