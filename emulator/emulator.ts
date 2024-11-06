@@ -108,6 +108,20 @@ const decodeAndExecute = (opcode: Uint16): void => {
                         memory.setRegister(nib2, result & 0xFF);
                     }
                     break;
+                case 5:
+                    // Opcode: 8XY5 (VX is set to the value of VX - VY. If Vx > Vy, then VF is set to 1, otherwise 0.
+                    {
+                        const result = memory.getRegister(nib2) -
+                            memory.getRegister(nib3);
+                        if (result > 0) {
+                            memory.setRegister(0xF, 1);
+                        } else {
+                            memory.setRegister(0xF, 0);
+                        }
+
+                        memory.setRegister(nib2, result & 0xFF);
+                    }
+                    break;
                 default:
                     throw new UnknownOpcodeError(opcode);
             }

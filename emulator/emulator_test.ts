@@ -252,6 +252,27 @@ describe("decodeAndExecute", () => {
         });
     });
 
+    describe("8XY5", () => {
+        it("VX is set to the result of VX - VY. If Vx > Vy, then VF is set to 1, otherwise 0.", () => {
+            const testCases = [
+                { input: [10, 6], expected: [4, 6, 1] },
+                { input: [0, 0], expected: [0, 0, 0] },
+                { input: [1, 0], expected: [1, 0, 1] },
+                { input: [5, 10], expected: [251, 10, 0] },
+                { input: [0x80, 0x01], expected: [0x7F, 0x01, 1] }, // Large positive result
+                { input: [0x01, 0x80], expected: [0x81, 0x80, 0] }, // Large negative result
+            ];
+            testCases.forEach(({ input, expected }) => {
+                setRegister(0, input[0]);
+                setRegister(1, input[1]);
+                emulator.decodeAndExecute(0x8015);
+                expect(getRegister(0)).toBe(expected[0]);
+                expect(getRegister(1)).toBe(expected[1]);
+                expect(getRegister(0xF)).toBe(expected[2]);
+            });
+        });
+    });
+
     describe("ANNN", () => {
         it("sets register I to NNN", () => {
             expect(getRegisterI()).toBe(0);
