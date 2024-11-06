@@ -6,6 +6,7 @@ import * as display from "../display/display.ts";
 import { font, FONT_BYTES_PER_CHAR } from "../fonts/font.ts";
 import {
     decrementTimers,
+    getDelayTimer,
     getSoundTimer,
     setSoundTimer,
 } from "../timers/timers.ts";
@@ -144,7 +145,10 @@ const decodeAndExecute = (opcode: Uint16): void => {
             }
             break;
         case 0xF:
-            if (nib3 === 1 && nib4 === 5) {
+            if (nib3 === 0 && nib4 === 7) {
+                // Opcode: FX07 (sets VX to the current value of the delay timer)
+                memory.setRegister(nib2, getDelayTimer());
+            } else if (nib3 === 1 && nib4 === 5) {
                 // Opcode: FX15 (sets the delay timer to the value in VX)
                 setDelayTimer(memory.getRegister(nib2));
             } else if (nib3 === 1 && nib4 === 8) {

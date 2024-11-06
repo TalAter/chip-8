@@ -24,7 +24,12 @@ import * as emulator from "../emulator/emulator.ts";
 import { clear, getPixel, setPixel } from "../display/display.ts";
 import { font, FONT_BYTES_PER_CHAR } from "../fonts/font.ts";
 import type { Uint8 } from "../types.ts";
-import { getDelayTimer, getSoundTimer, resetTimers } from "../timers/timers.ts";
+import {
+    getDelayTimer,
+    getSoundTimer,
+    resetTimers,
+    setDelayTimer,
+} from "../timers/timers.ts";
 
 describe("nibbleOpcode", () => {
     it("nibbles a 16 bit to four 4 bit nibbles", () => {
@@ -310,6 +315,24 @@ describe("decodeAndExecute", () => {
         });
 
         it.skip("wraps around the y and x values if they are larger than the screen", () => {});
+    });
+
+    describe("FX07", () => {
+        it("sets VX to the current value of the delay timer", () => {
+            const testCases = [
+                { register: 0x4, value: 42 },
+                { register: 0x0, value: 0 }, // Min value
+                { register: 0xF, value: 255 }, // Max value
+                { register: 0xA, value: 123 }, // Different register
+            ];
+
+            testCases.forEach(({ register, value }) => {
+                setDelayTimer(value);
+                emulator.decodeAndExecute(0xF007 + (register << 8));
+                expect(getRegister(register)).toBe(value);
+                expect(getDelayTimer()).toBe(value); // Timer shouldn't change
+            });
+        });
     });
 
     describe("FX15", () => {
