@@ -22,7 +22,7 @@ import {
 import { FONT_START, ROM_START } from "../memory/memory.ts";
 import * as emulator from "../emulator/emulator.ts";
 import { clear, getPixel, setPixel } from "../display/display.ts";
-import { font } from "../fonts/font.ts";
+import { font, FONT_BYTES_PER_CHAR } from "../fonts/font.ts";
 import type { Uint8 } from "../types.ts";
 
 describe("nibbleOpcode", () => {
@@ -386,6 +386,45 @@ describe("decodeAndExecute", () => {
             expect(getRegister(1)).toBe(0xF1);
             expect(getRegister(2)).toBe(0xF2);
             expect(getRegister(3)).toBe(0); // unchanged
+        });
+    });
+
+    describe("FX29", () => {
+        it("stores the address of the hexadecimal character in VX into register I ", () => {
+            const testCases = [
+                {
+                    x: 0x0,
+                    char: 0,
+                    expected: FONT_START + FONT_BYTES_PER_CHAR * 0,
+                },
+                {
+                    x: 0x1,
+                    char: 1,
+                    expected: FONT_START + FONT_BYTES_PER_CHAR * 1,
+                },
+                {
+                    x: 0x4,
+                    char: 0xF,
+                    expected: FONT_START + FONT_BYTES_PER_CHAR * 15,
+                },
+                {
+                    x: 0xA,
+                    char: 0x3F,
+                    expected: FONT_START + FONT_BYTES_PER_CHAR * 15,
+                },
+                {
+                    x: 0xF,
+                    char: 0x1A2B,
+                    expected: FONT_START + FONT_BYTES_PER_CHAR * 11,
+                },
+            ];
+
+            testCases.forEach(({ x, char, expected }) => {
+                setRegister(x, char);
+                emulator.decodeAndExecute(0xF029 + (x << 8));
+
+                expect(getRegisterI()).toBe(expected);
+            });
         });
     });
 });

@@ -3,7 +3,7 @@ import { UnknownOpcodeError } from "../errors/errors.ts";
 import * as cartridge from "../cartridge/cartridge.ts";
 import * as memory from "../memory/memory.ts";
 import * as display from "../display/display.ts";
-import { font } from "../fonts/font.ts";
+import { font, FONT_BYTES_PER_CHAR } from "../fonts/font.ts";
 
 const CYCLES_PER_SECOND = 700; // 700 Hz
 const FRAME_RATE = 60;
@@ -144,6 +144,12 @@ const decodeAndExecute = (opcode: Uint16): void => {
                 const newValue = memory.getRegisterI() +
                     memory.getRegister(nib2);
                 memory.setRegisterI(newValue <= 0xfff ? newValue : 1);
+            } else if (nib3 === 2 && nib4 === 9) {
+                //Opcode: FX29 (Set I to sprite address for hex digit in VX)
+                const x = memory.getRegister(nib2) & 0xf;
+                memory.setRegisterI(
+                    memory.FONT_START + x * FONT_BYTES_PER_CHAR,
+                );
             } else if (nib3 === 3 && nib4 === 3) {
                 // Opcode: FX33 (Store the binary-coded decimal representation of VX at addresses I, I+1, and I+2)
                 const number = memory.getRegister(nib2);
