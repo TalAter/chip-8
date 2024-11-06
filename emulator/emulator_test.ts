@@ -293,6 +293,26 @@ describe("decodeAndExecute", () => {
         });
     });
 
+    describe("9XY0", () => {
+        it("skips one instruction if the value in VX is not equal to VY", () => {
+            const testCases = [
+                { vx: 0x42, vy: 0x24, shouldSkip: true }, // Different values
+                { vx: 0x00, vy: 0x01, shouldSkip: true }, // Zero and non-zero
+                { vx: 0x42, vy: 0x42, shouldSkip: false }, // Equal values
+                { vx: 0x00, vy: 0x00, shouldSkip: false }, // Zero case
+                { vx: 0xFF, vy: 0xFF, shouldSkip: false }, // Max value case
+            ];
+
+            testCases.forEach(({ vx, vy, shouldSkip }) => {
+                const PC = getPC();
+                setRegister(2, vx);
+                setRegister(3, vy);
+                emulator.decodeAndExecute(0x9230);
+                expect(getPC()).toBe(shouldSkip ? PC + 2 : PC);
+            });
+        });
+    });
+
     describe("ANNN", () => {
         it("sets register I to NNN", () => {
             expect(getRegisterI()).toBe(0);

@@ -132,6 +132,12 @@ const decodeAndExecute = (opcode: Uint16): void => {
                     throw new UnknownOpcodeError(opcode);
             }
             break;
+        case 9:
+            // Opcode: 9XY0 (will skip one instruction if the value in VX is not equal to VY)
+            if (memory.getRegister(nib2) !== memory.getRegister(nib3)) {
+                memory.setPC(memory.getPC() + 2);
+            }
+            break;
         case 0xA:
             // Opcode: ANNN (sets register I to NNN)
             memory.setRegisterI(opcode & 0x0FFF);
