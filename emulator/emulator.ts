@@ -62,6 +62,12 @@ const decodeAndExecute = (opcode: Uint16): void => {
                 memory.setPC(memory.getPC() + 2);
             }
             break;
+        case 5:
+            // Opcode: 5XY0 (will skip one instruction if the value in VX equal to VY)
+            if (memory.getRegister(nib2) === memory.getRegister(nib3)) {
+                memory.setPC(memory.getPC() + 2);
+            }
+            break;
         case 6:
             // Opcode: 6XNN (sets register X to NN)
             memory.setRegister(nib2, opcode & 0x00FF);
