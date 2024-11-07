@@ -368,6 +368,80 @@ describe("decodeAndExecute", () => {
         });
     });
 
+    describe("8XYE", () => {
+        describe("COSMAC VIP implementation", () => {
+            beforeEach(() => {
+                emulator.config({ implementation: "COSMAC VIP" });
+            });
+
+            it("copies VY to VX then shifts left, stores MSB in VF", () => {
+                const testCases = [
+                    {
+                        input: { vx: 0x00, vy: 0x81 },
+                        expected: { vx: 0x02, vy: 0x81, vf: 1 }, // MSB was 1
+                    },
+                    {
+                        input: { vx: 0xFF, vy: 0x40 },
+                        expected: { vx: 0x80, vy: 0x40, vf: 0 }, // MSB was 0
+                    },
+                    {
+                        input: { vx: 0x00, vy: 0x55 },
+                        expected: { vx: 0xAA, vy: 0x55, vf: 0 }, // Alternating bits
+                    },
+                    {
+                        input: { vx: 0xFF, vy: 0xFF },
+                        expected: { vx: 0xFE, vy: 0xFF, vf: 1 }, // All bits set
+                    },
+                ];
+
+                testCases.forEach(({ input, expected }) => {
+                    setRegister(0, input.vx);
+                    setRegister(1, input.vy);
+                    emulator.decodeAndExecute(0x801E);
+                    expect(getRegister(0)).toBe(expected.vx);
+                    expect(getRegister(1)).toBe(expected.vy);
+                    expect(getRegister(0xF)).toBe(expected.vf);
+                });
+            });
+        });
+
+        describe("SUPER-CHIP implementation", () => {
+            beforeEach(() => {
+                emulator.config({ implementation: "SUPER-CHIP" });
+            });
+
+            it("shifts VX left without using VY, stores MSB in VF", () => {
+                const testCases = [
+                    {
+                        input: { vx: 0x81, vy: 0x00 },
+                        expected: { vx: 0x02, vy: 0x00, vf: 1 }, // MSB was 1
+                    },
+                    {
+                        input: { vx: 0x40, vy: 0xFF },
+                        expected: { vx: 0x80, vy: 0xFF, vf: 0 }, // MSB was 0, VY unchanged
+                    },
+                    {
+                        input: { vx: 0x55, vy: 0xFF },
+                        expected: { vx: 0xAA, vy: 0xFF, vf: 0 }, // Alternating bits
+                    },
+                    {
+                        input: { vx: 0xFF, vy: 0x00 },
+                        expected: { vx: 0xFE, vy: 0x00, vf: 1 }, // All bits set
+                    },
+                ];
+
+                testCases.forEach(({ input, expected }) => {
+                    setRegister(0, input.vx);
+                    setRegister(1, input.vy);
+                    emulator.decodeAndExecute(0x801E);
+                    expect(getRegister(0)).toBe(expected.vx);
+                    expect(getRegister(1)).toBe(expected.vy);
+                    expect(getRegister(0xF)).toBe(expected.vf);
+                });
+            });
+        });
+    });
+
     describe("9XY0", () => {
         it("skips one instruction if the value in VX is not equal to VY", () => {
             const testCases = [
