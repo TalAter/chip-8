@@ -1,4 +1,10 @@
-import { Bit, Uint16, Uint4, Uint8 } from "../types.ts";
+import {
+    type Bit,
+    type EmulatorConfig,
+    type Uint16,
+    type Uint4,
+    type Uint8,
+} from "../types.ts";
 import { UnknownOpcodeError } from "../errors/errors.ts";
 import * as cartridge from "../cartridge/cartridge.ts";
 import * as memory from "../memory/memory.ts";
@@ -13,10 +19,25 @@ import {
 import { beep } from "../sound/sound.ts";
 import { setDelayTimer } from "../timers/timers.ts";
 
-const CYCLES_PER_SECOND = 700; // 700 Hz
-const FRAME_RATE = 60;
-const MICROSECONDS_PER_CYCLE = 1_000_000 / CYCLES_PER_SECOND;
-const MICROSECONDS_PER_RENDER = 1_000_000 / FRAME_RATE;
+let SYSTEM_CONFIG: EmulatorConfig = {
+    implementation: "SUPER-CHIP",
+    cyclesPerSecond: 700, // 700 Hz
+    frameRate: 60,
+};
+
+let MICROSECONDS_PER_CYCLE = 1_000_000 / SYSTEM_CONFIG.cyclesPerSecond;
+let MICROSECONDS_PER_RENDER = 1_000_000 / SYSTEM_CONFIG.frameRate;
+
+const config = (conf: EmulatorConfig): void => {
+    // Only update properties that are defined in conf
+    SYSTEM_CONFIG = {
+        ...SYSTEM_CONFIG,
+        ...conf,
+    };
+    // recalculate speeds
+    MICROSECONDS_PER_CYCLE = 1_000_000 / SYSTEM_CONFIG.cyclesPerSecond;
+    MICROSECONDS_PER_RENDER = 1_000_000 / SYSTEM_CONFIG.frameRate;
+};
 
 const getCurrentTime = (): number => performance.now() * 1000;
 
@@ -291,4 +312,4 @@ const mainLoop = async (): Promise<void> => {
     }
 };
 
-export { decodeAndExecute, init, mainLoop, nibbleOpcode };
+export { config, decodeAndExecute, init, mainLoop, nibbleOpcode };

@@ -15,3 +15,11 @@ export type MemoryAddress = Uint16;
 
 /** Array of 8-bit numbers representing font sprite data */
 export type FontData = Uint8[];
+
+type ChipImplementation = "COSMAC VIP" | "SUPER-CHIP" | "CHIP48";
+
+export type EmulatorConfig = {
+    implementation: ChipImplementation;
+    cyclesPerSecond: number;
+    frameRate: number;
+};
