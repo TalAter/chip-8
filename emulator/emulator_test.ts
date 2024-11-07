@@ -43,6 +43,7 @@ describe("nibbleOpcode", () => {
 
 describe("decodeAndExecute", () => {
     beforeEach(() => {
+        emulator.config({ implementation: "COSMAC VIP" });
         resetRegisters();
         resetRegisterI();
         resetTimers();
@@ -289,6 +290,80 @@ describe("decodeAndExecute", () => {
                 expect(getRegister(0)).toBe(expected[0]);
                 expect(getRegister(1)).toBe(expected[1]);
                 expect(getRegister(0xF)).toBe(expected[2]);
+            });
+        });
+    });
+
+    describe("8XY6", () => {
+        describe("COSMAC VIP implementation", () => {
+            beforeEach(() => {
+                emulator.config({ implementation: "COSMAC VIP" });
+            });
+
+            it("copies VY to VX then shifts right, stores LSB in VF", () => {
+                const testCases = [
+                    {
+                        input: { vx: 0x00, vy: 0xFF },
+                        expected: { vx: 0x7F, vy: 0xFF, vf: 1 },
+                    },
+                    {
+                        input: { vx: 0xFF, vy: 0x02 },
+                        expected: { vx: 0x01, vy: 0x02, vf: 0 },
+                    },
+                    {
+                        input: { vx: 0x00, vy: 0xAA },
+                        expected: { vx: 0x55, vy: 0xAA, vf: 0 },
+                    },
+                    {
+                        input: { vx: 0x00, vy: 0x00 },
+                        expected: { vx: 0x00, vy: 0x00, vf: 0 },
+                    },
+                ];
+
+                testCases.forEach(({ input, expected }) => {
+                    setRegister(0, input.vx);
+                    setRegister(1, input.vy);
+                    emulator.decodeAndExecute(0x8016);
+                    expect(getRegister(0)).toBe(expected.vx);
+                    expect(getRegister(1)).toBe(expected.vy);
+                    expect(getRegister(0xF)).toBe(expected.vf);
+                });
+            });
+        });
+
+        describe("SUPER-CHIP implementation", () => {
+            beforeEach(() => {
+                emulator.config({ implementation: "SUPER-CHIP" });
+            });
+
+            it("shifts VX right without using VY, stores LSB in VF", () => {
+                const testCases = [
+                    {
+                        input: { vx: 0xFF, vy: 0x00 },
+                        expected: { vx: 0x7F, vy: 0x00, vf: 1 },
+                    },
+                    {
+                        input: { vx: 0x02, vy: 0xFF },
+                        expected: { vx: 0x01, vy: 0xFF, vf: 0 },
+                    },
+                    {
+                        input: { vx: 0xAA, vy: 0x00 },
+                        expected: { vx: 0x55, vy: 0x00, vf: 0 },
+                    },
+                    {
+                        input: { vx: 0x00, vy: 0xFF },
+                        expected: { vx: 0x00, vy: 0xFF, vf: 0 },
+                    },
+                ];
+
+                testCases.forEach(({ input, expected }) => {
+                    setRegister(0, input.vx);
+                    setRegister(1, input.vy);
+                    emulator.decodeAndExecute(0x8016);
+                    expect(getRegister(0)).toBe(expected.vx);
+                    expect(getRegister(1)).toBe(expected.vy);
+                    expect(getRegister(0xF)).toBe(expected.vf);
+                });
             });
         });
     });

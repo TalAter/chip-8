@@ -149,6 +149,18 @@ const decodeAndExecute = (opcode: Uint16): void => {
                         memory.setRegister(nib2, result & 0xFF);
                     }
                     break;
+                case 6:
+                    // Opcode: 8XY6 (Shift VX 1 bit to the right)
+                    {
+                        // The implementation differs between COSMAC VIP and newer systems
+                        const valueToShift =
+                            SYSTEM_CONFIG.implementation === "COSMAC VIP"
+                                ? memory.getRegister(nib3) // Use VY
+                                : memory.getRegister(nib2); // Use VX
+                        memory.setRegister(0xF, valueToShift & 1);
+                        memory.setRegister(nib2, valueToShift >> 1);
+                    }
+                    break;
                 default:
                     throw new UnknownOpcodeError(opcode);
             }
