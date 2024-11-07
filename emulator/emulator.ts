@@ -28,7 +28,7 @@ let SYSTEM_CONFIG: EmulatorConfig = {
 let MICROSECONDS_PER_CYCLE = 1_000_000 / SYSTEM_CONFIG.cyclesPerSecond;
 let MICROSECONDS_PER_RENDER = 1_000_000 / SYSTEM_CONFIG.frameRate;
 
-const config = (conf: EmulatorConfig): void => {
+const config = (conf: Partial<EmulatorConfig>): void => {
     // Only update properties that are defined in conf
     SYSTEM_CONFIG = {
         ...SYSTEM_CONFIG,
