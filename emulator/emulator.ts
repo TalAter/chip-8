@@ -136,7 +136,7 @@ const decodeAndExecute = (opcode: Uint16): void => {
                     }
                     break;
                 case 5:
-                    // Opcode: 8XY5 (VX is set to the value of VX - VY. If Vx > Vy, then VF is set to 1, otherwise 0.
+                    // Opcode: 8XY5 (VX is set to the value of VX - VY. If Vx > Vy, then VF is set to 1, otherwise 0.)
                     {
                         const result = memory.getRegister(nib2) -
                             memory.getRegister(nib3);
