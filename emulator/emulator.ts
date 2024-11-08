@@ -22,7 +22,7 @@ import * as keypad from "../keypad/keypad.ts";
 
 let SYSTEM_CONFIG: EmulatorConfig = {
     implementation: "SUPER-CHIP",
-    cyclesPerSecond: 700, // 700 Hz
+    cyclesPerSecond: 7000, // 700 Hz
     frameRate: 60,
 };
 
@@ -250,6 +250,14 @@ const decodeAndExecute = (opcode: Uint16): void => {
                             );
                         }
                     }
+                }
+            }
+            break;
+        case 0xE:
+            if (nib3 === 0xA && nib4 == 0x1) {
+                // Opcode EXA1 (skips the following instruction if the key corresponding to the value in VX is not pressed)
+                if (!keypad.isKeyPressed(memory.getRegister(nib2))) {
+                    skipInstruction();
                 }
             }
             break;
