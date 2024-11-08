@@ -199,6 +199,41 @@ describe("decodeAndExecute", () => {
         });
     });
 
+    describe("8XY1", () => {
+        it("sets VX to the OR of VX and VY. Does not affect VY", () => {
+            const testCases = [
+                {
+                    input: { vx: 0x00, vy: 0x00 },
+                    expected: { vx: 0x00, vy: 0x00 },
+                },
+                {
+                    input: { vx: 0xFF, vy: 0x00 },
+                    expected: { vx: 0xFF, vy: 0x00 },
+                },
+                {
+                    input: { vx: 0x00, vy: 0xFF },
+                    expected: { vx: 0xFF, vy: 0xFF },
+                },
+                {
+                    input: { vx: 0xF0, vy: 0x0F },
+                    expected: { vx: 0xFF, vy: 0x0F },
+                },
+                {
+                    input: { vx: 0xA5, vy: 0x5A },
+                    expected: { vx: 0xFF, vy: 0x5A },
+                },
+            ];
+
+            testCases.forEach(({ input, expected }) => {
+                setRegister(0, input.vx);
+                setRegister(1, input.vy);
+                emulator.decodeAndExecute(0x8011);
+                expect(getRegister(0)).toBe(expected.vx);
+                expect(getRegister(1)).toBe(expected.vy);
+            });
+        });
+    });
+
     describe("8XY2", () => {
         it("sets VX to the AND of VX and VY. Does not affect VY", () => {
             const testCases = [
