@@ -304,6 +304,8 @@ const init = (filename: string): void => {
 
     const cartridgeData = cartridge.readChip8File(filename);
     memory.storeROM(cartridgeData);
+
+    display.init();
 };
 
 const mainLoop = async (): Promise<void> => {
