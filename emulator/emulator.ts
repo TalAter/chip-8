@@ -22,7 +22,7 @@ import * as keypad from "../keypad/keypad.ts";
 
 let SYSTEM_CONFIG: EmulatorConfig = {
     implementation: "SUPER-CHIP",
-    cyclesPerSecond: 7000, // 700 Hz
+    cyclesPerSecond: 700, // 700 Hz
     frameRate: 60,
 };
 
