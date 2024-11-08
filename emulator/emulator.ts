@@ -18,6 +18,7 @@ import {
 } from "../timers/timers.ts";
 import { beep } from "../sound/sound.ts";
 import { setDelayTimer } from "../timers/timers.ts";
+import { handleKeyPresses } from "../keypad/keypad.ts";
 
 let SYSTEM_CONFIG: EmulatorConfig = {
     implementation: "SUPER-CHIP",
@@ -309,6 +310,9 @@ const init = (filename: string): void => {
 };
 
 const mainLoop = async (): Promise<void> => {
+    // Run keypress handler in the background
+    handleKeyPresses();
+
     let accummulatedTime = 0;
     let lastRender = 0;
     let lastCycleTime = getCurrentTime();
