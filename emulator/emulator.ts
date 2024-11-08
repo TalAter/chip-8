@@ -42,6 +42,10 @@ const config = (conf: Partial<EmulatorConfig>): void => {
 
 const getCurrentTime = (): number => performance.now() * 1000;
 
+const skipInstruction = (): void => {
+    memory.setPC(memory.getPC() + 2);
+};
+
 const nibbleOpcode = (opcode: Uint16): Uint4[] => [
     (opcode & 0xF000) >> 12,
     (opcode & 0x0F00) >> 8,
@@ -75,19 +79,19 @@ const decodeAndExecute = (opcode: Uint16): void => {
         case 3:
             // Opcode: 3XNN (will skip one instruction if the value in VX is equal to NN)
             if (memory.getRegister(nib2) === (opcode & 0x00FF)) {
-                memory.setPC(memory.getPC() + 2);
+                skipInstruction();
             }
             break;
         case 4:
             // Opcode: 4XNN (will skip one instruction if the value in VX is not equal to NN)
             if (memory.getRegister(nib2) !== (opcode & 0x00FF)) {
-                memory.setPC(memory.getPC() + 2);
+                skipInstruction();
             }
             break;
         case 5:
             // Opcode: 5XY0 (will skip one instruction if the value in VX equal to VY)
             if (memory.getRegister(nib2) === memory.getRegister(nib3)) {
-                memory.setPC(memory.getPC() + 2);
+                skipInstruction();
             }
             break;
         case 6:
@@ -186,7 +190,7 @@ const decodeAndExecute = (opcode: Uint16): void => {
         case 9:
             // Opcode: 9XY0 (will skip one instruction if the value in VX is not equal to VY)
             if (memory.getRegister(nib2) !== memory.getRegister(nib3)) {
-                memory.setPC(memory.getPC() + 2);
+                skipInstruction();
             }
             break;
         case 0xA:
