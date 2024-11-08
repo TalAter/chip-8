@@ -1,3 +1,3 @@
 export const beep = (): void => {
-    // @TODO Beep
+    console.log("\x07");
 };
