@@ -46,6 +46,10 @@ const skipInstruction = (): void => {
     memory.setPC(memory.getPC() + 2);
 };
 
+const blockExecution = (): void => {
+    memory.setPC(memory.getPC() - 2);
+};
+
 const nibbleOpcode = (opcode: Uint16): Uint4[] => [
     (opcode & 0xF000) >> 12,
     (opcode & 0x0F00) >> 8,
@@ -277,7 +281,17 @@ const decodeAndExecute = (opcode: Uint16): void => {
             }
             break;
         case 0xF:
-            if (nib3 === 0 && nib4 === 7) {
+            if (nib3 === 0 && nib4 === 0xA) {
+                // Opcode: FX0A (blocks execution until a key is pressed. Saves key value in VX)
+                {
+                    const pressedKey = keypad.getPressedKey();
+                    if (pressedKey !== undefined) {
+                        memory.setRegister(nib2, pressedKey);
+                    } else {
+                        blockExecution();
+                    }
+                }
+            } else if (nib3 === 0 && nib4 === 7) {
                 // Opcode: FX07 (sets VX to the current value of the delay timer)
                 memory.setRegister(nib2, getDelayTimer());
             } else if (nib3 === 1 && nib4 === 5) {
@@ -356,12 +370,12 @@ const mainLoop = async (): Promise<void> => {
 
         // Fetch-Decode-Execute
         while (accummulatedTime >= MICROSECONDS_PER_CYCLE) {
-            // Run keypress handler in the background
-            keypad.handleKeyPresses();
-
             accummulatedTime -= MICROSECONDS_PER_CYCLE;
             const opcode = memory.fetch();
             decodeAndExecute(opcode);
+
+            // Run keypress handler in the background
+            keypad.handleKeyPresses();
         }
 
         // Render
