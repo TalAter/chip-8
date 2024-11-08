@@ -259,6 +259,11 @@ const decodeAndExecute = (opcode: Uint16): void => {
                 if (!keypad.isKeyPressed(memory.getRegister(nib2))) {
                     skipInstruction();
                 }
+            } else if (nib3 === 0x9 && nib4 == 0xE) {
+                // Opcode EX9E (skips the following instruction if the key corresponding to the value in VX is pressed)
+                if (keypad.isKeyPressed(memory.getRegister(nib2))) {
+                    skipInstruction();
+                }
             }
             break;
         case 0xF:
