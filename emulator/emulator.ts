@@ -18,7 +18,7 @@ import {
 } from "../timers/timers.ts";
 import { beep } from "../sound/sound.ts";
 import { setDelayTimer } from "../timers/timers.ts";
-import { handleKeyPresses } from "../keypad/keypad.ts";
+import * as keypad from "../keypad/keypad.ts";
 
 let SYSTEM_CONFIG: EmulatorConfig = {
     implementation: "SUPER-CHIP",
@@ -306,13 +306,12 @@ const init = (filename: string): void => {
     const cartridgeData = cartridge.readChip8File(filename);
     memory.storeROM(cartridgeData);
 
+    keypad.init();
+
     display.init();
 };
 
 const mainLoop = async (): Promise<void> => {
-    // Run keypress handler in the background
-    handleKeyPresses();
-
     let accummulatedTime = 0;
     let lastRender = 0;
     let lastCycleTime = getCurrentTime();
@@ -323,6 +322,9 @@ const mainLoop = async (): Promise<void> => {
 
         // Fetch-Decode-Execute
         while (accummulatedTime >= MICROSECONDS_PER_CYCLE) {
+            // Run keypress handler in the background
+            keypad.handleKeyPresses();
+
             accummulatedTime -= MICROSECONDS_PER_CYCLE;
             const opcode = memory.fetch();
             decodeAndExecute(opcode);
