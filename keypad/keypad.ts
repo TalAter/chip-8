@@ -55,6 +55,11 @@ const init = (): void => {
 };
 
 const handleKeyPresses = async (): Promise<void> => {
+    // Reset all keys' state to 0
+    for (const key in KeyState) {
+        KeyState[key] = 0;
+    }
+
     const buffer = new Uint8Array(1);
     const bytesRead = await Deno.stdin.read(buffer);
 
