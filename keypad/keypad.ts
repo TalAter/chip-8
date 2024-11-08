@@ -1,4 +1,4 @@
-import { Bit, Uint8 } from "../types.ts";
+import { Bit, Uint4, Uint8 } from "../types.ts";
 
 interface KeyState {
     [key: Uint8]: Bit;
@@ -75,4 +75,8 @@ const handleKeyPresses = async (): Promise<void> => {
     }
 };
 
-export { handleKeyPresses, init };
+const isKeyPressed = (key: Uint4): Bit => {
+    return KeyState[key];
+};
+
+export { handleKeyPresses, init, isKeyPressed };
