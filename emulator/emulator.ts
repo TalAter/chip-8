@@ -90,8 +90,12 @@ const decodeAndExecute = (opcode: Uint16): void => {
             break;
         case 5:
             // Opcode: 5XY0 (will skip one instruction if the value in VX equal to VY)
-            if (memory.getRegister(nib2) === memory.getRegister(nib3)) {
-                skipInstruction();
+            if (nib4 === 0) {
+                if (memory.getRegister(nib2) === memory.getRegister(nib3)) {
+                    skipInstruction();
+                }
+            } else {
+                throw new UnknownOpcodeError(opcode);
             }
             break;
         case 6:
@@ -102,7 +106,7 @@ const decodeAndExecute = (opcode: Uint16): void => {
             // Opcode: 7XNN (adds NN to register X)
             memory.setRegister(
                 nib2,
-                memory.getRegister(nib2) + opcode & 0x00FF,
+                (memory.getRegister(nib2) + (opcode & 0x00FF)) & 0xFF,
             );
             break;
         case 8:
@@ -189,8 +193,12 @@ const decodeAndExecute = (opcode: Uint16): void => {
             break;
         case 9:
             // Opcode: 9XY0 (will skip one instruction if the value in VX is not equal to VY)
-            if (memory.getRegister(nib2) !== memory.getRegister(nib3)) {
-                skipInstruction();
+            if (nib4 === 0) {
+                if (memory.getRegister(nib2) !== memory.getRegister(nib3)) {
+                    skipInstruction();
+                }
+            } else {
+                throw new UnknownOpcodeError(opcode);
             }
             break;
         case 0xA:
@@ -264,6 +272,8 @@ const decodeAndExecute = (opcode: Uint16): void => {
                 if (keypad.isKeyPressed(memory.getRegister(nib2))) {
                     skipInstruction();
                 }
+            } else {
+                throw new UnknownOpcodeError(opcode);
             }
             break;
         case 0xF:
