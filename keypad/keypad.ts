@@ -3,24 +3,8 @@ import { Bit, Uint4 } from "../types.ts";
 interface KeypadScancodeDictionary {
     [key: number]: number;
 }
-const KeyState: Map<Uint4, Bit> = new Map([
-    [0x0, 0],
-    [0x1, 0],
-    [0x2, 0],
-    [0x3, 0],
-    [0x4, 0],
-    [0x5, 0],
-    [0x6, 0],
-    [0x7, 0],
-    [0x8, 0],
-    [0x9, 0],
-    [0xA, 0],
-    [0xB, 0],
-    [0xC, 0],
-    [0xD, 0],
-    [0xE, 0],
-    [0xF, 0],
-]);
+
+let keyPressed: Uint4 | undefined;
 
 const keypadScancodeDictionary: KeypadScancodeDictionary = {
     // Row 1
@@ -58,9 +42,8 @@ const handleKeyPresses = async (): Promise<void> => {
     if (bytesRead === 1) {
         const keyCode = buffer[0];
         if (keyCode in keypadScancodeDictionary) {
-            const chip8Key = keypadScancodeDictionary[keyCode];
-            KeyState.set(chip8Key, 1);
-            setTimeout(() => KeyState.set(chip8Key, 0), 100);
+            keyPressed = keypadScancodeDictionary[keyCode];
+            setTimeout(() => keyPressed = undefined, 100);
         }
         switch (buffer[0]) {
             case 27:
@@ -69,15 +52,14 @@ const handleKeyPresses = async (): Promise<void> => {
     }
 };
 
-const isKeyPressed = (key: Uint4): Bit => {
-    return KeyState.get(key) || 0;
+const isKeyPressed = (key: Uint4): boolean => {
+    const lastPressedKey = keyPressed;
+    return lastPressedKey === key;
 };
 
 const getPressedKey = (): Uint4 | undefined => {
-    KeyState.forEach((state, key) => {
-        if (state) return key;
-    });
-    return;
+    const lastPressedKey = keyPressed;
+    return lastPressedKey;
 };
 
 export { getPressedKey, handleKeyPresses, init, isKeyPressed };
